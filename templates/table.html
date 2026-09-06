@@ -16,9 +16,9 @@
 <body>
     <main>
 
-        <!-- Модальное окно -->
+        <!-- Модальное окно формы -->
         <div class="modal" id="form-modal">
-            <div class="wrapper form">
+            <div class="wrapper wrapper-form">
                 <form class="form-container">
                     <input type="text" placeholder="Номер ИСУ" class="form-input">
                     <input type="text" placeholder="ФИО" class="form-input">
@@ -33,50 +33,89 @@
                     </label>
 
                     <input type="text" placeholder="Заметки" class="form-input">
-                    <button type="submit" class="form-button">Сохранить</button>
-                    <button type="button" class="form-button" onclick="closeModal('form-modal')">Закрыть</button>
+                    <button type="submit" class="form-button" onclick="closeModal('form-modal')">Сохранить</button>
+                    <button type="button" class="form-button btn-secondary" onclick="closeModal('form-modal')">Закрыть</button>
                 </form>
             </div>
         </div>
 
+        <!-- Модальное окно подтверждения -->
         <div class="modal" id="confirm-modal">
-            <div class="wrapper confirm">
-                <h1> Подтвердить действие? </h1>
-                <p> Это нельзя будет отменить</p>
+            <div class="wrapper wrapper-window">
+                <h2>Подтвердить действие?</h2>
+                <p>Это нельзя будет отменить</p>
                 <div class="keyboard">
-                    <button id="ok" onclick="closeModal('confirm-modal')">Нет, не надо</button>
-                    <button id="cancel" onclick="closeModal('confirm-modal')">Да, без Б</button>
+                    <button type="button" class="btn" id="ok" onclick="closeModal('confirm-modal')">Нет, не надо</button>
+                    <button type="button" class="btn btn-danger" id="cancel" onclick="closeModal('confirm-modal')">Да, без Б</button>
                 </div>
             </div>
         </div>
 
-        <!-- Контейнер таблицы -->
-        <div class="wrapper table">
-            <table class="table-students" id="table-students">
-                <thead>
-                    <tr>
-                        <th>Действия</th>
-                        <th>ФИО</th>
-                        <th>ИСУ ID</th>
-                        <th>Номер общежития</th>
-                        <th>Комната</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="panel">
-                            <button type="button" class="btn btn-edit" id="edit-123456" onclick="openModal('form-modal')">Изменить</button>
-                            <button type="button" class="btn btn-delete" id="delete-123456" onclick="openModal('confirm-modal')">Удалить</button>
-                            <button type="button" class="btn btn-more" id="more-123456">Подробнее...</button>
-                        </td>
-                        <td>Иванов И.И.</td>
-                        <td>123456</td>
-                        <td>3</td>
-                        <td>402</td>
-                    </tr>
-                </tbody>
-            </table>
-            
+        <!-- Модальное окно с подробной информацией -->
+        <div class="modal" id="more-info-modal">
+            <div class="wrapper wrapper-window">
+                <h2>Подробная информация:</h2>
+                <div class="table-scroll-container">
+                    <table class="table-students table-minimized">
+                        <thead>
+                            <tr>
+                                <th>ФИО</th>
+                                <th>ИСУ ID</th>
+                                <th>Номер общежития</th>
+                                <th>Комната</th>
+                                <th>Срок заселения</th>
+                                <th>Иностранец</th>
+                                <th>Заметки</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Иванов И.И.</td>
+                                <td>123456</td>
+                                <td>3</td>
+                                <td>402</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="ok-container">
+                    <button type="button" class="btn btn-add" id="close" onclick="closeModal('more-info-modal')">ОК</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Контейнер основной таблицы -->
+        <div class="wrapper wrapper-table">
+            <div class="table-scroll-container">
+                <table class="table-students" id="table-students">
+                    <thead>
+                        <tr>
+                            <th>Действия</th>
+                            <th>ФИО</th>
+                            <th>ИСУ ID</th>
+                            <th>Номер общежития</th>
+                            <th>Комната</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="panel">
+                                <button type="button" class="btn btn-edit" id="edit-123456" onclick="openModal('form-modal')">Изменить</button>
+                                <button type="button" class="btn btn-delete" id="delete-123456" onclick="openModal('confirm-modal')">Удалить</button>
+                                <button type="button" class="btn btn-more" id="more-123456" onclick="openModal('more-info-modal')">Подробнее...</button>
+                            </td>
+                            <td>Иванов И.И.</td>
+                            <td>123456</td>
+                            <td>3</td>
+                            <td>402</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
             <div class="table-actions">
                 <button type="button" class="btn btn-add" id="btn-add" onclick="openModal('form-modal')">Добавить</button>
             </div>

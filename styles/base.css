@@ -1,21 +1,30 @@
+/* Базовые сбросы и переменные */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Courier New', monospace;
+  background-color: #f5f5f5;
+  color: #333;
+}
+
 /* Основной контейнер страницы */
 main {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100dvh;
-  padding: max(1vw, 1vh, 5px);
-  font-family: 'Courier New', monospace;
-  background-color: #f5f5f5;
+  padding: clamp(10px, 2vw, 24px);
 }
 
-/* Модальное окно (фон-оверлей) */
+/* Модальное окно (оверлей) */
 .modal {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  inset: 0;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
@@ -23,73 +32,83 @@ main {
   z-index: 9999;
   opacity: 0;
   pointer-events: none;
-  transition: all 0.3s ease-in-out;
+  transition: opacity 0.3s ease-in-out;
+  padding: 16px;
 }
 
-/* Состояние открытого модального окна */
 .modal.active {
-  top:0;
-  left:0;
-  width: 100vw;
-  height: 100vh;
   opacity: 1;
   pointer-events: auto;
 }
-/* Карточка внутри модального окна */
-.wrapper.form {
+
+/* Общий класс для белых карточек-контейнеров */
+.wrapper {
   width: 100%;
-  max-width: 360px;
-  max-height: 90svh;
+  max-height: 90dvh;
   padding: 24px;
   background: #ffffff;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  box-sizing: border-box;
+  overflow: auto;
 }
 
-.wrapper.confirm {
-  width: 100%;
-  max-width: 500px;
+.wrapper-form {
+  max-width: 360px;
+}
+
+.wrapper-window {
+  max-width: 1000px;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
-  align-content: center;
-  padding: 24px;
-  background: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  box-sizing: border-box;
-}
-.wrapper.confirm.keyboard{
-  display: flex;
-  justify-content: space-between;
-  align-content: center;
+  gap: 16px;
 }
 
-/* Обычный контейнер таблицы */
-.wrapper.table {
-  width: 100%;
-  max-height: 600px;
+.wrapper-table {
   max-width: 1000px;
-  padding: 24px;
-  background: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  box-sizing: border-box;
-  overflow: auto; 
+  max-height: 800px;
 }
 
-/* Таблица */
+/* Заголовки в модальных окнах */
+.wrapper h2 {
+  margin: 0 0 8px 0;
+  font-size: 1.25rem;
+}
+
+.wrapper p {
+  margin: 0;
+  color: #666;
+}
+
+/* Панели кнопок в модальных окнах */
+.keyboard {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.ok-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+/* Таблицы */
+.table-scroll-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
 .table-students {
   width: 100%;
   border-collapse: collapse;
   text-align: center;
-  min-width: 800px;
+  min-width: 600px;
 }
 
 .table-students th,
 .table-students td {
-  padding: 10px;
+  padding: 10px 12px;
   border-bottom: 1px solid #e9ecef;
 }
 
@@ -100,12 +119,22 @@ main {
   border-bottom: 2px solid #dee5eb;
 }
 
-/* Ячейка с кнопками в таблице */
+.table-students tbody tr:hover {
+  background-color: #f1f3f5;
+}
+
+/* Модификатор таблицы в подробном просмотре */
+.table-minimized th,
+.table-minimized td {
+  padding: 16px;
+  text-align: left;
+}
+
+/* Ячейка с кнопками действий */
 .table-students td.panel {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: 6px;
 }
 
@@ -114,15 +143,11 @@ main {
   max-width: 120px;
 }
 
-.table-students tbody tr:hover {
-  background-color: #f1f3f5;
-}
-
-/* Элементы формы */
+/* Формы */
 .form-container {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .form-input {
@@ -131,9 +156,9 @@ main {
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 14px;
-  box-sizing: border-box;
+  font-family: inherit;
   outline: none;
-  transition: border-color 0.4s ease-in-out;
+  transition: border-color 0.2s ease-in-out;
 }
 
 .form-input:focus,
@@ -156,53 +181,47 @@ main {
   cursor: pointer;
 }
 
+/* Кнопки */
+.btn,
 .form-button {
-  width: 100%;
-  padding: 10px;
-  background-color: #e0e0e0;
-  border: 1px solid #adadad;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
-}
-
-.form-button:hover {
-  background-color: #d4d4d4;
-}
-
-/* Кнопки таблицы */
-.table-actions {
-  margin-top: 12px;
-  display: flex;
-  justify-content: flex-start;
-}
-
-.btn {
-  padding: 6px 10px;
+  padding: 8px 14px;
   border: 1px solid #adadad;
   border-radius: 4px;
   background-color: #e0e0e0;
   font-family: inherit;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
 }
 
-.btn:hover {
+.btn:hover,
+.form-button:hover {
   background-color: #d4d4d4;
 }
 
 .btn-add {
-  padding: 8px 16px;
-  font-size: 14px;
   background-color: #007bff;
-  color: #fff;
+  color: #ffffff;
   border: none;
 }
 
 .btn-add:hover {
   background-color: #0056b3;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: #ffffff;
+  border: none;
+}
+
+.btn-danger:hover {
+  background-color: #bd2130;
+}
+
+.table-actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
 }
