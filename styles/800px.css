@@ -1,0 +1,14 @@
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 100dvh;
+    margin: max(1vw, 1vh, 5px);
+    font-family: 'Courier New', sans-serif;
+    background-color: #f5f5f5;
+}
+
+.wrapper.table{
+    max-width: 800px;
+}
