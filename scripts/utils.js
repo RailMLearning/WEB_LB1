@@ -1,5 +1,3 @@
-
-
 function showError(e=""){
     err = document.getElementById("error")
     err.innerHTML = e
