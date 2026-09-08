@@ -13,10 +13,13 @@ document.querySelector("#form-modal").
                 showError("Неверный ИСУ ID")
                 return false;
             }
-            await cookieStore.set({
-                "isu": data.get("isu"),
-                "fio": data.get("fio"),
 
+            let target 
+            
+            await cookieStore.set({
+                isu: {
+                    "fio": data.get("fio")
+                }
             })
 
             closeModal("#form-modal")

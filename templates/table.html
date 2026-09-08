@@ -20,7 +20,7 @@
         <div class="modal" id="form-modal">
             <div class="wrapper wrapper-form">
                 <form class="form-container" id="studform">
-                    <input name="isu" type="text" placeholder="Номер ИСУ" class="form-input" required>
+                    <input name="isu" type="number" placeholder="Номер ИСУ" class="form-input" required>
                     <input name="fio" type="text" placeholder="ФИО" class="form-input" required>
                     <input name="grid" type="text" placeholder="Группа" class="form-input" required>
                     <input name="dnum" type="number" placeholder="Номер общежития" class="form-input" required>
@@ -33,9 +33,12 @@
                     </label>
 
                     <input name="notes" type="text" placeholder="Заметки" class="form-input">
-                    <div id="error"></div>
+                    <div id="error">
+
+                    </div>
                     <button type="submit" class="form-button" id="submit">Сохранить</button>
-                    <button type="button" class="form-button btn-secondary" onclick="closeModal('form-modal')">Закрыть</button>
+                    <button type="button" class="form-button btn-secondary"
+                        onclick="closeModal('form-modal')">Закрыть</button>
                 </form>
             </div>
         </div>
@@ -46,8 +49,10 @@
                 <h2>Подтвердить действие?</h2>
                 <p>Это нельзя будет отменить</p>
                 <div class="keyboard">
-                    <button type="button" class="btn" id="ok" onclick="closeModal('confirm-modal')">Нет, не надо</button>
-                    <button type="button" class="btn btn-danger" id="cancel" onclick="closeModal('confirm-modal')">Да, без Б</button>
+                    <button type="button" class="btn" id="ok" onclick="closeModal('confirm-modal')">Нет, не
+                        надо</button>
+                    <button type="button" class="btn btn-danger" id="cancel" onclick="closeModal('confirm-modal')">Да,
+                        без Б</button>
                 </div>
             </div>
         </div>
@@ -83,7 +88,8 @@
                     </table>
                 </div>
                 <div class="ok-container">
-                    <button type="button" class="btn btn-add" id="close" onclick="closeModal('more-info-modal')">ОК</button>
+                    <button type="button" class="btn btn-add" id="close"
+                        onclick="closeModal('more-info-modal')">ОК</button>
                 </div>
             </div>
         </div>
@@ -104,9 +110,12 @@
                     <tbody>
                         <tr>
                             <td class="panel">
-                                <button type="button" class="btn btn-edit" id="edit-123456" onclick="openModal('form-modal')">Изменить</button>
-                                <button type="button" class="btn btn-delete" id="delete-123456" onclick="openModal('confirm-modal')">Удалить</button>
-                                <button type="button" class="btn btn-more" id="more-123456" onclick="openModal('more-info-modal')">Подробнее...</button>
+                                <button type="button" class="btn btn-edit" id="edit-123456"
+                                    onclick="openModal('form-modal')">Изменить</button>
+                                <button type="button" class="btn btn-delete" id="delete-123456"
+                                    onclick="openModal('confirm-modal')">Удалить</button>
+                                <button type="button" class="btn btn-more" id="more-123456"
+                                    onclick="openModal('more-info-modal')">Подробнее...</button>
                             </td>
                             <td>Иванов И.И.</td>
                             <td>123456</td>
@@ -118,7 +127,8 @@
             </div>
 
             <div class="table-actions">
-                <button type="button" class="btn btn-add" id="btn-add" onclick="openModal('form-modal')">Добавить</button>
+                <button type="button" class="btn btn-add" id="btn-add"
+                    onclick="openModal('form-modal')">Добавить</button>
             </div>
         </div>
 
