@@ -20,20 +20,20 @@
         <div class="modal" id="form-modal">
             <div class="wrapper wrapper-form">
                 <form class="form-container">
-                    <input type="text" placeholder="Номер ИСУ" class="form-input">
-                    <input type="text" placeholder="ФИО" class="form-input">
-                    <input type="text" placeholder="Группа" class="form-input">
-                    <input type="number" placeholder="Номер общежития" class="form-input">
-                    <input type="number" placeholder="Комната" class="form-input">
-                    <input type="number" placeholder="Срок заселения (лет)" class="form-input">
+                    <input name="id" type="text" placeholder="Номер ИСУ" class="form-input" required>
+                    <input name="fio" type="text" placeholder="ФИО" class="form-input" required>
+                    <input name="grid" type="text" placeholder="Группа" class="form-input" required>
+                    <input name="dnum" type="number" placeholder="Номер общежития" class="form-input" required>
+                    <input name="rnum" type="number" placeholder="Комната" class="form-input" required>
+                    <input name="expdate" type="date" placeholder="Срок заселения (лет)" class="form-input" required>
 
                     <label class="checkbox-label">
-                        <input type="checkbox">
+                        <input name="foreign" type="checkbox" required>
                         <span>Иностранец</span>
                     </label>
 
-                    <input type="text" placeholder="Заметки" class="form-input">
-                    <button type="submit" class="form-button" onclick="closeModal('form-modal')">Сохранить</button>
+                    <input name="notes" type="text" placeholder="Заметки" class="form-input">
+                    <button type="submit" class="form-button" onclick="closeModal('form-modal')" id="submit">Сохранить</button>
                     <button type="button" class="form-button btn-secondary" onclick="closeModal('form-modal')">Закрыть</button>
                 </form>
             </div>
