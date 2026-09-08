@@ -19,8 +19,8 @@
         <!-- Модальное окно формы -->
         <div class="modal" id="form-modal">
             <div class="wrapper wrapper-form">
-                <form class="form-container">
-                    <input name="id" type="text" placeholder="Номер ИСУ" class="form-input" required>
+                <form class="form-container" id="studform">
+                    <input name="isu" type="text" placeholder="Номер ИСУ" class="form-input" required>
                     <input name="fio" type="text" placeholder="ФИО" class="form-input" required>
                     <input name="grid" type="text" placeholder="Группа" class="form-input" required>
                     <input name="dnum" type="number" placeholder="Номер общежития" class="form-input" required>
@@ -33,7 +33,8 @@
                     </label>
 
                     <input name="notes" type="text" placeholder="Заметки" class="form-input">
-                    <button type="submit" class="form-button" onclick="closeModal('form-modal')" id="submit">Сохранить</button>
+                    <div id="error"></div>
+                    <button type="submit" class="form-button" id="submit">Сохранить</button>
                     <button type="button" class="form-button btn-secondary" onclick="closeModal('form-modal')">Закрыть</button>
                 </form>
             </div>
@@ -125,6 +126,8 @@
 
     <script src="../scripts/modal.js" type="text/javascript"></script>
     <script src="../scripts/eventHandlers.js" type="text/javascript"></script>
+    <script src="../scripts/utils.js" type="text/javascript"></script>
+    <script src="../scripts/cookies.js" type="text/javascript"></script>
 </body>
 
 </html>

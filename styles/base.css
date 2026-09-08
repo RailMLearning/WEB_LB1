@@ -225,3 +225,17 @@ main {
   display: flex;
   justify-content: flex-end;
 }
+
+#error{
+  transition: opacity 0.5s ease-in;
+}
+
+.err-active{
+  font-weight: 300;
+  opacity: 1;
+  color:#dc3545;
+}
+.err-inactive{
+  opacity: 0;
+  display: none;
+}
