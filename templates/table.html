@@ -16,7 +16,6 @@
 <body>
     <main>
 
-        <!-- Модальное окно формы -->
         <div class="modal" id="form-modal">
             <div class="wrapper wrapper-form">
                 <form class="form-container" id="studform">
@@ -43,7 +42,6 @@
             </div>
         </div>
 
-        <!-- Модальное окно подтверждения -->
         <div class="modal" id="confirm-modal">
             <div class="wrapper wrapper-window">
                 <h2>Подтвердить действие?</h2>
@@ -57,34 +55,13 @@
             </div>
         </div>
 
-        <!-- Модальное окно с подробной информацией -->
         <div class="modal" id="more-info-modal">
             <div class="wrapper wrapper-window">
                 <h2>Подробная информация:</h2>
+                <p id="student-details-status" role="status"></p>
                 <div class="table-scroll-container">
-                    <table class="table-students table-minimized">
-                        <thead>
-                            <tr>
-                                <th>ФИО</th>
-                                <th>ИСУ ID</th>
-                                <th>Номер общежития</th>
-                                <th>Комната</th>
-                                <th>Срок заселения</th>
-                                <th>Иностранец</th>
-                                <th>Заметки</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr id="more-info">
-                                <td>Иванов И.И.</td>
-                                <td>123456</td>
-                                <td>3</td>
-                                <td>402</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        </tbody>
+                    <table class="table-students table-minimized student-details-table" aria-label="Досье студента">
+                        <tbody id="more-info"></tbody>
                     </table>
                 </div>
                 <div class="ok-container">
@@ -94,7 +71,6 @@
             </div>
         </div>
 
-        <!-- Контейнер основной таблицы -->
         <div class="wrapper wrapper-table">
             <div class="table-scroll-container">
                 <table class="table-students" id="table-students">
@@ -115,7 +91,7 @@
                                 <button type="button" class="btn btn-delete" id="delete-123456"
                                     onclick="openModal('confirm-modal')">Удалить</button>
                                 <button type="button" class="btn btn-more" id="more-123456"
-                                    onclick="openModal('more-info-modal')">Подробнее...</button>
+                                    onclick="showStudentDetailsById('123456')">Подробнее...</button>
                             </td>
                             <td>Иванов И.И.</td>
                             <td>123456</td>
@@ -135,6 +111,7 @@
     </main>
 
     <script src="../scripts/modal.js" type="text/javascript"></script>
+    <script src="../scripts/studentDetails.js"></script>
     <script src="../scripts/eventHandlers.js" type="text/javascript"></script>
     <script src="../scripts/utils.js" type="text/javascript"></script>
     <script src="../scripts/cookies.js" type="text/javascript"></script>

@@ -4,6 +4,7 @@ document.getElementById('table-students').
         "click",
         (event) => {
             let btn = event.target
+            if (!btn.id || btn.id.startsWith('more-')) return;
             console.log(btn.getAttribute("id"), btn.getAttribute("id").includes("edit"))
             if(btn.getAttribute("id").includes("edit")){
                 openModal("form-modal")
