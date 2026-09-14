@@ -19,20 +19,21 @@
         <div class="modal" id="form-modal">
             <div class="wrapper wrapper-form">
                 <form class="form-container" id="studform">
-                    <input name="isu" type="number" placeholder="Номер ИСУ" class="form-input" required>
-                    <input name="fio" type="text" placeholder="ФИО" class="form-input" required>
-                    <input name="grid" type="text" placeholder="Группа" class="form-input" required>
-                    <input name="dnum" type="number" placeholder="Номер общежития" class="form-input" required>
-                    <input name="rnum" type="number" placeholder="Комната" class="form-input" required>
-                    <input name="expdate" type="date" placeholder="Срок заселения (лет)" class="form-input" required>
+                    <input name="isu" type="text" inputmode="numeric" pattern="[0-9]{5,7}" minlength="5" maxlength="7" placeholder="Номер ИСУ" aria-label="Номер ИСУ" class="form-input" required>
+                    <input name="fio" type="text" maxlength="150" placeholder="ФИО" aria-label="ФИО" class="form-input" required>
+                    <input name="grid" type="text" minlength="2" maxlength="20" placeholder="Группа" aria-label="Группа" class="form-input" required>
+                    <input name="dnum" type="number" min="1" step="1" placeholder="Номер общежития" aria-label="Номер общежития" class="form-input" required>
+                    <input name="rnum" type="number" min="1" step="1" placeholder="Комната" aria-label="Комната" class="form-input" required>
+                    <label for="student-expdate">Срок заселения (дата)</label>
+                    <input id="student-expdate" name="expdate" type="date" class="form-input" required>
 
                     <label class="checkbox-label">
-                        <input name="foreigner" type="checkbox" required>
+                        <input name="foreigner" type="checkbox">
                         <span>Иностранец</span>
                     </label>
 
-                    <input name="notes" type="text" placeholder="Заметки" class="form-input">
-                    <div id="error">
+                    <input name="notes" type="text" maxlength="500" placeholder="Заметки" aria-label="Заметки" class="form-input">
+                    <div id="error" role="alert">
 
                     </div>
                     <button type="submit" class="form-button" id="submit">Сохранить</button>
@@ -114,6 +115,7 @@
     <script src="../scripts/studentDetails.js"></script>
     <script src="../scripts/eventHandlers.js" type="text/javascript"></script>
     <script src="../scripts/utils.js" type="text/javascript"></script>
+    <script src="../scripts/validation.js"></script>
     <script src="../scripts/cookies.js" type="text/javascript"></script>
     <script src="../scripts/onload.js" type="text/javascript"></script>
 </body>
