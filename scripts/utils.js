@@ -79,8 +79,6 @@ async function getStudentById(isu){
 }
 
 async function delteteStudentById(isu) {
-    let res = {}
-
     let cookies = await cookieStore.getAll()
     cookies.forEach(c => {
         if(c.name.includes(isu)) 
@@ -88,8 +86,6 @@ async function delteteStudentById(isu) {
                 cookieStore.delete(c.name)
             }
     })
-
-    return res;
 }
 
 async function getAllIds(){
