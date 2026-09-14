@@ -50,7 +50,7 @@ function showStudentDetails(student) {
         ["Номер общежития", formatStudentText(student.dnum)],
         ["Комната", formatStudentText(student.rnum)],
         ["Срок заселения", formatStudentDate(student.expdate)],
-        ["Иностранец", formatStudentForeign(student.foreign)],
+        ["Иностранец", formatStudentForeign(student.foreigner ?? student.foreign)],
         ["Заметки", formatStudentText(student.notes, "Нет заметок")]
     ];
 
@@ -77,7 +77,7 @@ async function readStudentDetails(isu) {
 
     const cookies = await window.cookieStore.getAll();
     const student = {};
-    const fields = ["isu", "fio", "grid", "dnum", "rnum", "expdate", "foreign", "notes"];
+    const fields = ["isu", "fio", "grid", "dnum", "rnum", "expdate", "foreign", "foreigner", "notes"];
 
     for (const field of fields) {
         const cookie = cookies.find(item => item.name === `${field}_isu${isu}`);

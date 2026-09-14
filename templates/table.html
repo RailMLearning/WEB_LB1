@@ -27,7 +27,7 @@
                     <input name="expdate" type="date" placeholder="Срок заселения (лет)" class="form-input" required>
 
                     <label class="checkbox-label">
-                        <input name="foreign" type="checkbox" required>
+                        <input name="foreigner" type="checkbox" required>
                         <span>Иностранец</span>
                     </label>
 
@@ -83,8 +83,8 @@
                             <th>Комната</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
+                    <tbody id="students-tbody">
+                        <!-- <tr>
                             <td class="panel">
                                 <button type="button" class="btn btn-edit" id="edit-123456"
                                     onclick="openModal('form-modal')">Изменить</button>
@@ -97,7 +97,7 @@
                             <td>123456</td>
                             <td>3</td>
                             <td>402</td>
-                        </tr>
+                        </tr> -->
                     </tbody>
                 </table>
             </div>
@@ -115,6 +115,7 @@
     <script src="../scripts/eventHandlers.js" type="text/javascript"></script>
     <script src="../scripts/utils.js" type="text/javascript"></script>
     <script src="../scripts/cookies.js" type="text/javascript"></script>
+    <script src="../scripts/onload.js" type="text/javascript"></script>
 </body>
 
 </html>
