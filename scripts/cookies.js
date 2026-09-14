@@ -1,3 +1,13 @@
+async function removeCookies(){
+    (await cookieStore.getAll()).forEach(c=>{
+        cookieStore.delete(c.name)
+    })
+}
+
+//заморозка обновлений кук для предотвращения множественной вставки в таблицу
+
+let isUpdatingCookie = false;
+
 document.querySelector("#form-modal").
     addEventListener(
         "submit",
@@ -17,15 +27,21 @@ document.querySelector("#form-modal").
                 return false;
             }
             console.log(data.keys())
+
+            isUpdatingCookie = true;
+
             for (let key of data.keys()) {
 
                 await cookieStore.set({
                     "name": `${key}_isu${data.get("isu")}`,
                     "value": data.get(key),
-                    expires: Date.now() + 24 * 60 * 60 * 1000, // 1 день
-                    path: '/'
+                    "expires": Date.now() + 24 * 60 * 60 * 1000, // 1 день
+                    "path": '/'
                 })
             }
+
+            isUpdatingCookie = false;
+
             closeModal("#form-modal")
         }
     )
@@ -33,8 +49,8 @@ document.querySelector("#form-modal").
 cookieStore.addEventListener(
     "change",
     (event) => {
-
-        updateTable()
+        
+        if (!isUpdatingCookie) updateTables()
 
     }
 )

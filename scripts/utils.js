@@ -1,5 +1,3 @@
-
-
 function showError(e = "") {
     err = document.getElementById("error")
     err.innerHTML = e
@@ -28,9 +26,9 @@ function addShortTableRow(data = {
     "dnum": "",
     "rnum": ""
 }) {
-    document.getElementById("table-students").
+    document.getElementById("students-tbody").
         innerHTML += `
-        <tr>
+                        <tr>
                             <td class="panel">
                                 <button type="button" class="btn btn-edit" id="edit-${data.isu}"
                                     onclick="openModal('form-modal')">Изменить</button>
@@ -50,13 +48,22 @@ function addShortTableRow(data = {
 function replaceWideTable(data = {
     "isu": "",
     "fio": "",
-    "gr_id": "",
+    "grid": "",
     "dnum": "",
     "rnum": "",
     "foreigner": "",
     "notes": ""
 }) {
-    document.getElementById("")
+    document.getElementById("more-info").
+        innerHTML=`
+                                <td>${data.fio}</td>
+                                <td>${data.isu}</td>
+                                <td>${data.grid}</td>
+                                <td>${data.dnum}</td>
+                                <td>${data.rnum}</td>
+                                <td>${data.foreigner=="on"?"Да":"Нет"}</td>
+                                <td>${data.notes}</td>
+        `
 }
 
 async function getStudentById(isu){
@@ -66,6 +73,20 @@ async function getStudentById(isu){
     let cookies = await cookieStore.getAll()
     cookies.forEach(c => {
         if(c.name.includes(isu)) res[c.name.split("_")[0]]=c.value
+    })
+
+    return res;
+}
+
+async function delteteStudentById(isu) {
+    let res = {}
+
+    let cookies = await cookieStore.getAll()
+    cookies.forEach(c => {
+        if(c.name.includes(isu)) 
+            {
+                cookieStore.delete(c.name)
+            }
     })
 
     return res;
@@ -82,7 +103,9 @@ async function getAllIds(){
 }
 
 function updateTables() {
+    console.log(document.getElementById("students-tbody"))
 
+    document.getElementById("students-tbody").innerHTML = ""
     getAllIds().then(ids => {
         ids.forEach(id => {
             getStudentById(id).then(s => {
