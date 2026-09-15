@@ -27,8 +27,8 @@ function validateStudent(data) {
         }
     }
     const date = new Date(`${data.expdate}T00:00:00Z`);
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(data.expdate) || data.expdate.startsWith("0000-") || Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== data.expdate) {
-        return { field: "expdate", message: "Укажите существующую календарную дату." };
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(data.expdate) || !/^\d{4}/.test(data.expdate) || Number(data.expdate.slice(0, 4)) < 1900 || Number(data.expdate.slice(0, 4)) > 9999 || Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== data.expdate) {
+        return { field: "expdate", message: "Дата должна быть существующей календарной датой в диапазоне от 01.01.1900 до 31.12.9999." };
     }
     if (data.notes.length > 500) {
         return { field: "notes", message: "Заметки не должны превышать 500 символов." };

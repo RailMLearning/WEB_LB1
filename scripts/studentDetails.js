@@ -75,6 +75,10 @@ async function readStudentDetails(isu) {
         throw new Error("Cookies недоступны. Откройте сайт через localhost в браузере с поддержкой Cookie Store API.");
     }
 
+    if (typeof getStudentById === "function") {
+        return getStudentById(isu);
+    }
+
     const cookies = await window.cookieStore.getAll();
     const student = {};
     const fields = ["isu", "fio", "grid", "dnum", "rnum", "expdate", "foreign", "foreigner", "notes"];
