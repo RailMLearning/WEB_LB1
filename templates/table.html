@@ -46,11 +46,11 @@
         <div class="modal" id="confirm-modal">
             <div class="wrapper wrapper-window">
                 <h2>Подтвердить действие?</h2>
-                <p>Это нельзя будет отменить</p>
+                <p id="delete-description">Это нельзя будет отменить</p>
                 <div class="keyboard">
                     <button type="button" class="btn" id="ok" onclick="closeModal('confirm-modal')">Нет, не
                         надо</button>
-                    <button type="button" class="btn btn-danger" id="cancel" onclick="closeModal('confirm-modal')">Да,
+                    <button type="button" class="btn btn-danger" id="confirm-delete" onclick="closeModal('confirm-modal')">Да,
                         без Б</button>
                 </div>
             </div>
@@ -73,6 +73,7 @@
         </div>
 
         <div class="wrapper wrapper-table">
+            <p id="table-status" role="status"></p>
             <div class="table-scroll-container">
                 <table class="table-students" id="table-students">
                     <thead>

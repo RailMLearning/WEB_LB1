@@ -1,64 +1,61 @@
-async function removeCookies() {
-    for (const cookie of await cookieStore.getAll()) {
-        await cookieStore.delete(cookie.name);
+const studentForm = document.getElementById("studform");
+var originalIsu = null;
+var saving = false;
+var isUpdatingCookie = false;
+
+function prepareStudentForm(student = null) {
+    studentForm.reset();
+    for (const input of Array.from(studentForm.elements || [])) input.setCustomValidity?.("");
+    hideError();
+    originalIsu = student?.isu ?? null;
+    const title = document.getElementById("form-title");
+    if (title) title.textContent = student ? "Редактирование студента" : "Добавление студента";
+    if (student) for (const field of studentFields) {
+        const input = studentForm.elements.namedItem(field);
+        if (!input) continue;
+        if (field === "foreigner") input.checked = formatStudentForeign(student.foreigner ?? student.foreign) === "Да";
+        else input.value = student[field] ?? "";
     }
+    openModal("form-modal");
 }
 
-let isUpdatingCookie = false;
-const studentForm = document.getElementById("studform");
-
-studentForm.addEventListener("input", (event) => {
-    event.target.setCustomValidity("");
-    hideError();
-});
-
-studentForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    if (isUpdatingCookie) return;
-    hideError();
-
-    const data = getStudentFormData(studentForm);
-    const error = validateStudent(data);
-    if (error) {
-        showStudentFormError(studentForm, error);
-        return;
-    }
-
-    const submitButton = studentForm.querySelector('[type="submit"]');
-    isUpdatingCookie = true;
-    submitButton.disabled = true;
-
-    try {
-        if (!("cookieStore" in window)) {
-            throw new Error("Хранилище недоступно. Откройте сайт через localhost в браузере с поддержкой Cookie Store API.");
+function attachFormHandlers() {
+    if (studentForm.__handlersAttached) return;
+    studentForm.__handlersAttached = true;
+    studentForm.addEventListener("input", event => { event.target.setCustomValidity(""); hideError(); });
+    studentForm.addEventListener("submit", async event => {
+        event.preventDefault();
+        if (saving) return;
+        hideError();
+        const data = getStudentFormData(studentForm);
+        const error = validateStudent(data);
+        if (error) return showStudentFormError(studentForm, error);
+        saving = true;
+        isUpdatingCookie = true;
+        const controls = Array.from(studentForm.elements || []);
+        controls.forEach(control => { control.disabled = true; });
+        try {
+                if (!window.cookieStore.getAll) {
+                    const existing = await window.cookieStore.get(`isu_isu${data.isu}`);
+                    if (existing) {
+                        const duplicate = { field: "isu", message: "Студент с таким ИСУ уже существует. Введите другой ИСУ." };
+                        showStudentFormError(studentForm, duplicate);
+                        return;
+                    }
+                    for (const [key, value] of Object.entries(data)) await window.cookieStore.set({ name: `${key}_isu${data.isu}`, value });
+                } else await saveStudent(data, originalIsu);
+            studentForm.reset();
+            closeModal("form-modal");
+            await updateTables();
+        } catch (error) {
+            if (error.field) showStudentFormError(studentForm, error);
+            else showError(error.message);
+        } finally {
+            saving = false;
+            isUpdatingCookie = false;
+            controls.forEach(control => { control.disabled = false; });
         }
-        const existing = await cookieStore.get(`isu_isu${data.isu}`);
-        if (existing) {
-            showStudentFormError(studentForm, { field: "isu", message: "Студент с таким ИСУ уже существует. Введите другой ИСУ." });
-            return;
-        }
-
-        for (const [key, value] of Object.entries(data)) {
-            await cookieStore.set({
-                name: `${key}_isu${data.isu}`,
-                value,
-                expires: Date.now() + 24 * 60 * 60 * 1000,
-                path: "/"
-            });
-        }
-        studentForm.reset();
-        closeModal("form-modal");
-        updateTables();
-    } catch (error) {
-        showError("Не удалось сохранить студента. " + error.message);
-    } finally {
-        isUpdatingCookie = false;
-        submitButton.disabled = false;
-    }
-});
-
-if ("cookieStore" in window) {
-    cookieStore.addEventListener("change", () => {
-        if (!isUpdatingCookie) updateTables();
     });
 }
+
+if (typeof studentForm?.addEventListener === "function") attachFormHandlers();
