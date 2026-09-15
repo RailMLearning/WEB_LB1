@@ -1,5 +1,5 @@
 function validateId(isu = "") {
-    return /^\d{5,7}$/.test(isu);
+    return (/^\d{5,7}$/.test(isu))&&(parseInt(isu)!==0);
 }
 
 function getStudentFormData(form) {
@@ -16,7 +16,7 @@ function validateStudent(data) {
         return { field: "isu", message: "ИСУ ID должен содержать от 5 до 7 цифр." };
     }
     if (data.fio.length > 150 || !/^\p{L}[\p{L}\p{M}'’\-]*(?:\s+\p{L}[\p{L}\p{M}'’\-]*)*$/u.test(data.fio)) {
-        return { field: "fio", message: "Введите имя буквами. Допустимы пробелы, дефис и апостроф, максимум 150 символов." };
+        return { field: "fio", message: "Введите ФИО буквами. Допустимы пробелы, дефис и апостроф, максимум 150 символов." };
     }
     if (!/^[\p{L}\d-]{2,20}$/u.test(data.grid)) {
         return { field: "grid", message: "Группа: от 2 до 20 символов, только буквы, цифры и дефис." };

@@ -80,7 +80,7 @@ async function showStudentDetailsById(isu) {
     const status = document.getElementById("student-details-status");
 
     body.replaceChildren();
-    status.textContent = "Загрузка…";
+    status.textContent = "Загрузка...";
     openModal("more-info-modal");
 
     try {
