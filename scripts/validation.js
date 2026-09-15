@@ -1,5 +1,5 @@
 function validateId(isu = "") {
-    return /^\d{5,7}$/.test(isu);
+    return /^\d\d{4,6}$/.test(isu);
 }
 
 function getStudentFormData(form) {
