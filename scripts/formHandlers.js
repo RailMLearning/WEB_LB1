@@ -35,15 +35,7 @@ function attachFormHandlers() {
         const controls = Array.from(studentForm.elements || []);
         controls.forEach(control => { control.disabled = true; });
         try {
-                if (!window.cookieStore.getAll) {
-                    const existing = await window.cookieStore.get(`isu_isu${data.isu}`);
-                    if (existing) {
-                        const duplicate = { field: "isu", message: "Студент с таким ИСУ уже существует. Введите другой ИСУ." };
-                        showStudentFormError(studentForm, duplicate);
-                        return;
-                    }
-                    for (const [key, value] of Object.entries(data)) await window.cookieStore.set({ name: `${key}_isu${data.isu}`, value });
-                } else await saveStudent(data, originalIsu);
+            await saveStudent(data, originalIsu);
             studentForm.reset();
             closeModal("form-modal");
             await updateTables();
@@ -58,4 +50,4 @@ function attachFormHandlers() {
     });
 }
 
-if (typeof studentForm?.addEventListener === "function") attachFormHandlers();
+attachFormHandlers();
