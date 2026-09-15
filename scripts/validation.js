@@ -27,7 +27,7 @@ function validateStudent(data) {
         }
     }
     const date = new Date(`${data.expdate}T00:00:00Z`);
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(data.expdate) || Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== data.expdate) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(data.expdate) || Number(data.expdate.slice(0, 4)) < 1 || Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== data.expdate) {
         return { field: "expdate", message: "Укажите существующую календарную дату." };
     }
     if (data.notes.length > 500) {

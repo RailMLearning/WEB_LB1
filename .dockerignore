@@ -1,0 +1,7 @@
+.git
+DELETE
+node_modules
+tests
+*.md
+.codex
+.agents

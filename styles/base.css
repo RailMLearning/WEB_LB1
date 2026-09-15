@@ -87,7 +87,7 @@ main {
   margin-top: 12px;
 }
 
-/* Таблицы */
+
 .table-scroll-container {
   width: 100%;
   overflow-x: auto;
@@ -249,4 +249,37 @@ main {
 
 #student-details-status:empty {
   display: none;
+}
+#error,
+#delete-error {
+    color: #b42318;
+    overflow-wrap: anywhere;
+}
+#error:empty,
+#delete-error:empty {
+    display: none;
+}
+h1 {
+    margin: 0 0 16px;
+    font-size: clamp(1.3rem, 4vw, 1.8rem);
+}
+.form-container label {
+    font-size: 14px;
+}
+textarea {
+    resize: vertical;
+}
+button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid #174ea6;
+    outline-offset: 2px;
+}
+.table-students td {
+    overflow-wrap: anywhere;
+    max-width: 260px;
 }

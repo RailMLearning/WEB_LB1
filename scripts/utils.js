@@ -1,86 +1,46 @@
-function showError(e = "") {
-    const err = document.getElementById("error")
-    err.textContent = e
-    err.classList.add("err-active")
-    err.classList.remove("err-inactive")
+function showError(message = "") {
+    document.getElementById("error").textContent = message;
 }
+
 function hideError() {
-    const err = document.getElementById("error")
-    err.textContent = ""
-    err.classList.add("err-inactive")
-    err.classList.remove("err-active")
+    showError("");
 }
 
-function addShortTableRow(data = {
-    "isu": "",
-    "fio": "",
-    "dnum": "",
-    "rnum": ""
-}) {
-    document.getElementById("students-tbody").
-        innerHTML += `
-                        <tr>
-                            <td class="panel">
-                                <button type="button" class="btn btn-edit" id="edit-${data.isu}"
-                                    onclick="openModal('form-modal')">Изменить</button>
-                                <button type="button" class="btn btn-delete" id="delete-${data.isu}"
-                                    onclick="openModal('confirm-modal')">Удалить</button>
-                                <button type="button" class="btn btn-more" id="more-${data.isu}"
-                                    onclick="openModal('more-info-modal')">Подробнее...</button>
-                            </td>
-                            <td>${data.fio}</td>
-                            <td>${data.isu}</td>
-                            <td>${data.dnum}</td>
-                            <td>${data.rnum}</td>
-                        </tr>
-        `
+function createStudentRow(student) {
+    const row = document.createElement("tr");
+    const panel = document.createElement("td");
+    panel.className = "panel";
+    for (const [action, label] of [["edit", "Изменить"], ["delete", "Удалить"], ["more", "Подробнее"]]) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `btn btn-${action}`;
+        button.dataset.action = action;
+        button.dataset.isu = student.isu;
+        button.textContent = label;
+        panel.appendChild(button);
+    }
+    row.appendChild(panel);
+    for (const field of ["fio", "grid", "isu", "dnum", "rnum"]) {
+        const cell = document.createElement("td");
+        cell.textContent = formatStudentText(student[field]);
+        row.appendChild(cell);
+    }
+    return row;
 }
 
-function replaceWideTable(data) {
-    showStudentDetails(data);
-}
+let tableRequest = 0;
 
-async function getStudentById(isu){
-
-    let res = {}
-
-    let cookies = await cookieStore.getAll()
-    cookies.forEach(c => {
-        if(c.name.includes(isu)) res[c.name.split("_")[0]]=c.value
-    })
-
-    return res;
-}
-
-async function delteteStudentById(isu) {
-    let cookies = await cookieStore.getAll()
-    cookies.forEach(c => {
-        if(c.name.includes(isu))
-            {
-                cookieStore.delete(c.name)
-            }
-    })
-}
-
-async function getAllIds(){
-    let res = []
-
-    let cookies = await cookieStore.getAll()
-    cookies.forEach(c => {
-        if(c.name.includes("isu_isu")) res.push(c.name.substring(7))
-    })
-    return res
-}
-
-function updateTables() {
-    console.log(document.getElementById("students-tbody"))
-
-    document.getElementById("students-tbody").innerHTML = ""
-    getAllIds().then(ids => {
-        ids.forEach(id => {
-            getStudentById(id).then(s => {
-                 addShortTableRow(s)
-            })
-        })
-    })
+async function updateTables() {
+    const request = ++tableRequest;
+    const status = document.getElementById("table-status");
+    try {
+        const students = await getAllStudents();
+        if (request !== tableRequest) return;
+        const rows = students.map(createStudentRow);
+        document.getElementById("students-tbody").replaceChildren(...rows);
+        status.textContent = students.length ? `Студентов: ${students.length}` : "Студентов пока нет. Нажмите «Добавить».";
+    } catch (error) {
+        if (request !== tableRequest) return;
+        status.textContent = "Не удалось обновить список. " + error.message;
+    }
 }

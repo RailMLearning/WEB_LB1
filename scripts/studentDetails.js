@@ -71,22 +71,7 @@ function showStudentDetails(student) {
 }
 
 async function readStudentDetails(isu) {
-    if (!("cookieStore" in window)) {
-        throw new Error("Cookies недоступны. Откройте сайт через localhost в браузере с поддержкой Cookie Store API.");
-    }
-
-    const cookies = await window.cookieStore.getAll();
-    const student = {};
-    const fields = ["isu", "fio", "grid", "dnum", "rnum", "expdate", "foreign", "foreigner", "notes"];
-
-    for (const field of fields) {
-        const cookie = cookies.find(item => item.name === `${field}_isu${isu}`);
-        if (cookie) {
-            student[field] = cookie.value;
-        }
-    }
-
-    return student.isu === String(isu) ? student : null;
+    return getStudentById(isu);
 }
 
 async function showStudentDetailsById(isu) {
