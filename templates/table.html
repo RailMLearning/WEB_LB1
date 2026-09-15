@@ -21,7 +21,7 @@
                 <form class="form-container" id="studform">
                     <input name="isu" type="text" inputmode="numeric" pattern="[0-9]{5,7}" minlength="5" maxlength="7" placeholder="Номер ИСУ" aria-label="Номер ИСУ" class="form-input" required>
                     <input name="fio" type="text" maxlength="150" placeholder="ФИО" aria-label="ФИО" class="form-input" required>
-                    <input name="grid" type="text" minlength="2" maxlength="20" placeholder="Группа" aria-label="Группа" class="form-input" required>
+                    <input name="grid" type="text" pattern="[A-Z][0-9]{4}[a-z]?" minlength="5" maxlength="6" placeholder="Группа" aria-label="Группа" class="form-input" required>
                     <input name="dnum" type="number" min="1" step="1" placeholder="Номер общежития" aria-label="Номер общежития" class="form-input" required>
                     <input name="rnum" type="number" min="1" step="1" placeholder="Комната" aria-label="Комната" class="form-input" required>
                     <label for="student-expdate">Срок заселения (дата)</label>

@@ -15,11 +15,11 @@ function validateStudent(data) {
     if (!validateId(data.isu)) {
         return { field: "isu", message: "ИСУ ID должен содержать от 5 до 7 цифр." };
     }
-    if (data.fio.length > 150 || !/^\p{L}[\p{L}\p{M}'’\-]*(?:\s+\p{L}[\p{L}\p{M}'’\-]*)+$/u.test(data.fio)) {
-        return { field: "fio", message: "Введите фамилию и имя буквами, через пробел. Допустимы дефис и апостроф, максимум 150 символов." };
+    if (data.fio.length > 150 || !/^\p{L}[\p{L}\p{M}'’\-]*(?:\s+\p{L}[\p{L}\p{M}'’\-]*)*$/u.test(data.fio)) {
+        return { field: "fio", message: "Введите фамилию и имя или одно слово буквами. Допустимы дефис и апостроф, максимум 150 символов." };
     }
-    if (!/^[\p{L}\d-]{2,20}$/u.test(data.grid)) {
-        return { field: "grid", message: "Группа: от 2 до 20 символов, только буквы, цифры и дефис." };
+    if (!/^[A-Z]\d{4}[a-z]?$/.test(data.grid)) {
+        return { field: "grid", message: "Группа должна иметь формат: заглавная латинская буква, 4 цифры и необязательная строчная латинская буква." };
     }
     for (const field of ["dnum", "rnum"]) {
         if (!/^\d+$/.test(data[field]) || !Number.isSafeInteger(Number(data[field])) || Number(data[field]) < 1) {
