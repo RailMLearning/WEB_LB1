@@ -28,8 +28,28 @@ function studentRecords(cookies) {
 }
 
 async function getAllStudents() {
-    const response = await fetch("/api/requests", { method: "GET" });
-    return readStudentResponse(response);
+    let response;
+    try {
+        response = await fetch("/api/requests", { method: "GET" });
+    } catch (error) {
+        throw new Error(`Не удалось получить список студентов: ${error.message}`);
+    }
+
+    let students;
+    try {
+        students = await response.json();
+    } catch {
+        throw new Error("Сервер вернул некорректный JSON списка студентов.");
+    }
+
+    if (!response.ok) {
+        const message = students?.detail || students?.message || `Сервер вернул ошибку ${response.status}.`;
+        throw new Error(message);
+    }
+    if (!Array.isArray(students)) {
+        throw new Error("Сервер вернул список студентов в неправильном формате.");
+    }
+    return students;
 }
 
 async function getStudentById(isu) {
@@ -104,10 +124,22 @@ async function saveStudent(student, originalIsu = null) {
 }
 
 async function deleteStudentById(isu) {
-    const snapshot = await requireCookieStore().getAll();
-    const record = studentRecords(snapshot).find(item => item.student.isu === String(isu));
-    if (!record) throw new Error("Студент уже удалён. Обновите список.");
-    const names = legacyCookies(snapshot, String(isu)).map(cookie => cookie.name);
-    if (record.key) names.push(record.key);
-    await changeStudentCookies(names.map(name => ({ name, value: null })), snapshot);
+    let response;
+    try {
+        response = await fetch(`/api/requests/${encodeURIComponent(isu)}`, { method: "DELETE" });
+    } catch (error) {
+        throw new Error(`Не удалось удалить студента: ${error.message}`);
+    }
+
+    if (response.status === 204) return;
+
+    let body = null;
+    try {
+        body = await response.json();
+    } catch { }
+
+    if (!response.ok) {
+        const message = body?.detail || body?.message || `Сервер вернул ошибку ${response.status}.`;
+        throw new Error(message);
+    }
 }
