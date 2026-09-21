@@ -28,11 +28,12 @@ function studentRecords(cookies) {
 }
 
 async function getAllStudents() {
-    return studentRecords(await requireCookieStore().getAll()).map(record => record.student).sort((a, b) => a.isu.localeCompare(b.isu));
+    return fetch('api/requests');
 }
 
 async function getStudentById(isu) {
-    return (await getAllStudents()).find(student => student.isu === String(isu)) ?? null;
+    // return (await getAllStudents()).find(student => student.isu === String(isu)) ?? null;
+    return await fetch("api/requests/"+isu, {method: 'GET'})
 }
 
 function legacyCookies(cookies, isu) {
