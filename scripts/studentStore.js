@@ -28,12 +28,28 @@ function studentRecords(cookies) {
 }
 
 async function getAllStudents() {
-    return fetch('api/requests');
+    const response = await fetch("/api/requests", { method: "GET" });
+    return readStudentResponse(response);
 }
 
 async function getStudentById(isu) {
-    // return (await getAllStudents()).find(student => student.isu === String(isu)) ?? null;
-    return await fetch("api/requests/"+isu, {method: 'GET'})
+    const response = await fetch(`/api/requests/${encodeURIComponent(isu)}`, { method: "GET" });
+    if (response.status === 404) return null;
+    return readStudentResponse(response);
+}
+
+async function readStudentResponse(response) {
+    let body = null;
+    try {
+        body = await response.json();
+    } catch {
+        body = null;
+    }
+    if (!response.ok) {
+        const message = body?.detail || body?.message || `Сервер вернул ошибку ${response.status}.`;
+        throw new Error(message);
+    }
+    return body;
 }
 
 function legacyCookies(cookies, isu) {
