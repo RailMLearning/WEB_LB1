@@ -1,14 +1,10 @@
-FROM node:24-alpine
-
+FROM python:3.14-slim
 WORKDIR /app
-ENV NODE_ENV=production HOST=0.0.0.0 PORT=8080
-
-COPY --chown=node:node package.json server.cjs ./
-COPY --chown=node:node templates ./templates
-COPY --chown=node:node scripts ./scripts
-COPY --chown=node:node styles ./styles
-COPY --chown=node:node icons ./icons
-
-USER node
-EXPOSE 8080
-CMD ["node", "server.cjs"]
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 DB_PATH=/data/db.json
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+COPY server ./server
+COPY static ./static
+COPY templates ./templates
+EXPOSE 8000
+CMD ["uvicorn", "server.routers.serve:app", "--host", "0.0.0.0", "--port", "8000"]

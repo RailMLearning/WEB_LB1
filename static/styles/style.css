@@ -1,2 +1,5 @@
 @import "base.css";
 @import "800px.css" screen and (max-width: 800px);
+.student-filters { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; margin-bottom: 20px; }
+.student-filters label { display: flex; flex-direction: column; gap: 4px; }
+.student-filters input, .student-filters select { padding: 8px; max-width: 180px; }

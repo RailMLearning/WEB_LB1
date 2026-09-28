@@ -35,7 +35,7 @@ document.getElementById("confirm-delete")?.addEventListener("click", async () =>
         selectedDeleteIsu = null;
         closeModal("confirm-modal");
         await updateTables();
-    } catch (error) { showError(error.message); }
+    } catch (error) { document.getElementById("table-status").textContent = error.message; }
     finally { saving = false; }
 });
 

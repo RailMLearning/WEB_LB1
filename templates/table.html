@@ -2,6 +2,8 @@
 <html lang="ru">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="{{ url_for('static', path='/icons/favicon.ico') }}" type="image/x-icon">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', path='/icons/apple-touch-icon.png') }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', path='/icons/favicon-32x32.png') }}">
@@ -17,7 +19,7 @@
         <div class="modal" id="form-modal">
             <div class="wrapper wrapper-form">
                 <form class="form-container" id="studform">
-                    <input name="isu" type="text" inputmode="numeric" pattern="[1-9][0-9]{4,6}" minlength="5" maxlength="7" placeholder="Номер ИСУ" aria-label="Номер ИСУ" class="form-input" required>
+                    <input name="isu" type="text" inputmode="numeric" pattern="[0-9]{5,7}" minlength="5" maxlength="7" placeholder="Номер ИСУ" aria-label="Номер ИСУ" class="form-input" required>
                     <input name="fio" type="text" maxlength="150" placeholder="ФИО" aria-label="ФИО" class="form-input" required>
                     <input name="grid" type="text" pattern="[A-Z][0-9]{4}[a-z]?" minlength="5" maxlength="6" placeholder="Группа" aria-label="Группа" class="form-input" required>
                     <input name="dnum" type="number" min="1" step="1" placeholder="Номер общежития" aria-label="Номер общежития" class="form-input" required>
@@ -71,6 +73,18 @@
         </div>
 
         <div class="wrapper wrapper-table">
+            <form id="student-filters" class="student-filters">
+                <label>ИСУ <input name="isu" type="text"></label>
+                <label>ФИО <input name="fio" type="text"></label>
+                <label>Группа <input name="group" type="text"></label>
+                <label>Общежитие <input name="dormitory" type="number" min="1" step="1"></label>
+                <label>Комната <input name="rnum" type="number" min="1" step="1"></label>
+                <label>Срок заселения <input name="expdate" type="date"></label>
+                <label>Иностранец <select name="foreigner"><option value="">Все</option><option value="true">Да</option><option value="false">Нет</option></select></label>
+                <label>Заметки <input name="notes" type="text"></label>
+                <button type="submit" class="btn">Найти</button>
+                <button type="reset" class="btn">Сбросить</button>
+            </form>
             <p id="table-status" role="status"></p>
             <div class="table-scroll-container">
                 <table class="table-students" id="table-students">
@@ -78,6 +92,7 @@
                         <tr>
                             <th>Действия</th>
                             <th>ФИО</th>
+                            <th>Группа</th>
                             <th>ИСУ ID</th>
                             <th>Номер общежития</th>
                             <th>Комната</th>

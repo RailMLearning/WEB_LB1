@@ -6,17 +6,20 @@ from pathlib import Path
 
 from server.settings import BASE_DIR
 
-DB_PATH = BASE_DIR / "server/db.json"
+DB_PATH = Path(os.environ.get("DB_PATH", BASE_DIR / "server/db.json"))
 _students_lock = RLock()
 
 
 def _load_students():
+    if not DB_PATH.exists():
+        return []
     with open(DB_PATH, encoding="utf-8") as db:
         return json.load(db)
 
 
 def _write_students(students):
-    file_descriptor, temporary_path = tempfile.mkstemp(dir=BASE_DIR, prefix=".db-", suffix=".tmp")
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    file_descriptor, temporary_path = tempfile.mkstemp(dir=DB_PATH.parent, prefix=".db-", suffix=".tmp")
     try:
         with os.fdopen(file_descriptor, "w", encoding="utf-8") as db:
             json.dump(students, db, ensure_ascii=False, indent=4)

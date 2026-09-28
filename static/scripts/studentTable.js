@@ -21,15 +21,29 @@ function createStudentRow(student) {
 }
 
 let tableRequest = 0;
+let studentFilters = {};
 async function updateTables() {
     const request = ++tableRequest;
     const status = document.getElementById("table-status");
     try {
-        const students = await getAllStudents();
+        const students = await getAllStudents(studentFilters);
         if (request !== tableRequest) return;
         document.getElementById("students-tbody").replaceChildren(...students.map(createStudentRow));
-        if (status) status.textContent = students.length ? `Студентов: ${students.length}` : "Студентов пока нет. Нажмите «Добавить».";
+        if (status) status.textContent = students.length ? `Студентов: ${students.length}` : "Студенты не найдены.";
     } catch (error) {
         if (request === tableRequest && status) status.textContent = "Не удалось обновить список. " + error.message;
     }
 }
+
+const filterForm = document.getElementById("student-filters");
+filterForm.addEventListener("submit", event => {
+    event.preventDefault();
+    studentFilters = Object.fromEntries(
+        [...new FormData(filterForm)].map(([field, value]) => [field, value.trim()])
+    );
+    updateTables();
+});
+filterForm.addEventListener("reset", () => {
+    studentFilters = {};
+    updateTables();
+});

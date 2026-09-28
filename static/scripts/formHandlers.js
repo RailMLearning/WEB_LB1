@@ -1,7 +1,6 @@
 const studentForm = document.getElementById("studform");
 var originalIsu = null;
 var saving = false;
-var isUpdatingCookie = false;
 
 function prepareStudentForm(student = null) {
     studentForm.reset();
@@ -31,7 +30,6 @@ function attachFormHandlers() {
         const error = validateStudent(data);
         if (error) return showStudentFormError(studentForm, error);
         saving = true;
-        isUpdatingCookie = true;
         const controls = Array.from(studentForm.elements || []);
         controls.forEach(control => { control.disabled = true; });
         try {
@@ -40,11 +38,11 @@ function attachFormHandlers() {
             closeModal("form-modal");
             await updateTables();
         } catch (error) {
-            if (error.field) showStudentFormError(studentForm, error);
+            controls.forEach(control => { control.disabled = false; });
+            if (error.field && studentForm.elements.namedItem(error.field)) showStudentFormError(studentForm, error);
             else showError(error.message);
         } finally {
             saving = false;
-            isUpdatingCookie = false;
             controls.forEach(control => { control.disabled = false; });
         }
     });
