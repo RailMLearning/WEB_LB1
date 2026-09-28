@@ -2,6 +2,7 @@ import re
 import unicodedata
 from datetime import datetime
 
+from server.settings import BASE_DIR
 from server.formatter import format_student
 
 
