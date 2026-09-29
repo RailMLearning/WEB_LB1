@@ -1,8 +1,7 @@
 from fastapi import APIRouter, HTTPException, Request, Response
 
-from server.store import create_student, delete_student_by_id, get_all_students, get_student_by_id, update_student
-from server.validator import validate_student
-from server.filters import filter_students
+from server.students import create_student, delete_student_by_id, get_all_students, get_student_by_id, students_filters, update_student
+from server.validator import validate_filters, validate_student
 
 api_router = APIRouter()
 
@@ -15,10 +14,10 @@ def get_requests(request: Request):
 	return _filtered_students(dict(request.query_params))
 
 def _filtered_students(filters):
-	students, errors = filter_students(get_all_students(), filters)
+	filters, errors = validate_filters(filters)
 	if errors:
 		raise HTTPException(status_code=422, detail=errors)
-	return students
+	return students_filters(get_all_students(), filters)
 
 @api_router.api_route("/api/requests", methods=["QUERY"], include_in_schema=False)
 async def query_requests(request: Request):
