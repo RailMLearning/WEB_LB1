@@ -18,7 +18,7 @@ function prepareStudentForm(student = null) {
     openModal("form-modal");
 }
 
-function attachFormHandlers() {
+(function attachFormHandlers() {
     if (studentForm.__handlersAttached) return;
     studentForm.__handlersAttached = true;
     studentForm.addEventListener("input", event => { event.target.setCustomValidity(""); hideError(); });
@@ -46,6 +46,4 @@ function attachFormHandlers() {
             controls.forEach(control => { control.disabled = false; });
         }
     });
-}
-
-attachFormHandlers();
+})();
