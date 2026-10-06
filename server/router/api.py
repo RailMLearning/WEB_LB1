@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, Request, Response
 
 from server.filter_validator import validate_filters
+from server.models import StudentCreate, StudentUpdate
 from server.student_manager import create_student, delete_student_by_id, get_all_students, get_student_by_id, students_filters, update_student
 from server.validator import validate_student
 
@@ -34,12 +35,8 @@ async def _read_json_object(request: Request):
 	return body
 
 @api_router.post("/api/requests", status_code=201)
-async def create_request(request: Request):
-	body = await _read_json_object(request)
-	student, errors = validate_student(body)
-	if errors:
-		raise HTTPException(status_code=422, detail=errors)
-	created_student = create_student(student)
+def create_request(student: StudentCreate):
+	created_student = create_student(student.model_dump())
 	if created_student is None:
 		raise HTTPException(status_code=409, detail="Студент с таким ИСУ уже существует")
 	return created_student
@@ -52,11 +49,8 @@ def get_request(isu: str):
 	return student
 
 @api_router.patch("/api/requests/{isu}")
-async def patch_request(isu: str, request: Request):
-	body = await _read_json_object(request)
-	updates, errors = validate_student(body, partial=True)
-	if errors:
-		raise HTTPException(status_code=422, detail=errors)
+def patch_request(isu: str, student: StudentUpdate):
+	updates = student.model_dump(exclude_unset=True)
 	result, updated_student = update_student(isu, updates, validate_student)
 	if result == "not_found":
 		raise HTTPException(status_code=404, detail="Студент не найден")

@@ -1,14 +1,8 @@
-import re
-
 from server.validator import _error, validate_student
 
 
 FIELDS = {"isu", "fio", "grid", "dnum", "rnum", "expdate", "foreigner", "notes"}
-REQUIRED_FIELDS = FIELDS - {"notes"}
 FILTER_ALIASES = {"group": "grid", "dormitory": "dnum"}
-GRID_PATTERN = re.compile(r"^[A-Z][0-9]{4}[a-z]?$")
-DATE_PATTERN = re.compile(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$")
-ISU_PATTERN = re.compile(r"^[0-9]{5,7}$")
 
 def validate_filters(filters):
 	if not isinstance(filters, dict):

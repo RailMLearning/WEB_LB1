@@ -9,6 +9,7 @@ from server.router.api import api_router
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException
 from fastapi.exceptions import RequestValidationError
+from server.validator import validation_errors
 
 
 
@@ -23,8 +24,12 @@ async def http_error(request, error):
 
 @app.exception_handler(RequestValidationError)
 async def validation_error(request, error):
-    detail = [{"field": str(item["loc"][-1]), "message": item["msg"]} for item in error.errors()]
-    return JSONResponse(status_code=422, content={"detail": detail})
+    errors = error.errors()
+    if any(item["type"] == "json_invalid" for item in errors):
+        return JSONResponse(status_code=400, content={"detail": [{"field": None, "message": "Некорректный JSON."}]})
+    if any(tuple(item["loc"]) == ("body",) and item["type"] in ("missing", "model_attributes_type", "model_type") for item in errors):
+        return JSONResponse(status_code=400, content={"detail": [{"field": None, "message": "Тело запроса должно быть JSON-объектом."}]})
+    return JSONResponse(status_code=422, content={"detail": validation_errors(errors)})
 
 @app.exception_handler(Exception)
 async def server_error(request, error):

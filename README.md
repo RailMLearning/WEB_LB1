@@ -32,9 +32,9 @@ docker compose down
 
 ## API и данные
 
-Данные студентов хранятся списком в `server/db.json`. Другой путь задаётся через переменную окружения `DB_PATH`. Прикладной код использует словари и функции, без собственных Pydantic-моделей.
+Данные студентов хранятся списком в `server/db.json`. Другой путь задаётся через переменную окружения `DB_PATH`. Входные данные POST и PATCH проверяются Pydantic-моделями `StudentCreate` и `StudentUpdate` из `server/models.py`. После проверки `model_dump()` преобразует модель в словарь для бизнес-операций и записи JSON.
 
-Маршруты — `server/router/api.py`, проверки студента — `server/validator.py`, проверки фильтров — `server/filter_validator.py`, бизнес-операции и фильтрация — `server/student_manager.py`, чтение и запись JSON — `server/store.py`.
+Маршруты — `server/router/api.py`, модели и правила полей — `server/models.py`, повторная проверка записи — `server/validator.py`, проверки фильтров — `server/filter_validator.py`, бизнес-операции и фильтрация — `server/student_manager.py`, чтение и запись JSON — `server/store.py`.
 
 | Запрос | Назначение |
 | --- | --- |
@@ -56,3 +56,14 @@ docker compose down
 JSON-хранилище рассчитано на один процесс Uvicorn. Блокировка синхронизирует потоки одного процесса, а запись через временный файл защищает от частичного перезаписывания JSON. Cookies для данных студентов не используются.
 
 Подготовка к защите: `LAB2_DEFENSE.md`. История изменений: `CHANGELOG.md`.
+
+## Проверка backend
+
+```sh
+python -m pip install -r requirements-dev.txt
+python -m unittest discover -s tests -v
+```
+
+Тесты используют временный JSON-файл. Проверяются валидация, форматирование, частичный PATCH, уникальность ИСУ, GET/QUERY, ошибки и схемы Swagger. Реальные записи не изменяются.
+
+`venv` и `.venv` — локальные виртуальные окружения. Они не хранятся в Git; зависимости устанавливаются из `requirements.txt`.

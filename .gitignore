@@ -1,2 +1,8 @@
-venv
+venv/
+.venv/
+env/
+node_modules/
+__pycache__/
 *.pyc
+.env
+ONLY_FOR_AI/
