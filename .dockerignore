@@ -1,9 +1,0 @@
-.git
-node_modules
-tests
-*.md
-venv
-.venv
-**/__pycache__
-*.pyc
-ONLY_FOR_AI
