@@ -1,0 +1,8 @@
+FROM node:24-alpine
+WORKDIR /app
+ENV HOST=0.0.0.0 PORT=8080 BACKEND_HOST=web BACKEND_PORT=8000
+COPY server.cjs ./
+COPY templates ./templates
+COPY static ./static
+EXPOSE 8080
+CMD ["node", "server.cjs"]

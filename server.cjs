@@ -28,7 +28,11 @@ function proxyApi(request, response) {
         response.writeHead(backendResponse.statusCode, backendResponse.headers);
         backendResponse.pipe(response);
     });
-    proxy.on("error", () => response.writeHead(502).end("Backend unavailable"));
+    proxy.on("error", () => {
+        if (response.headersSent) return response.destroy();
+        response.writeHead(502, { "Content-Type": "application/json; charset=utf-8" });
+        response.end(JSON.stringify({ detail: [{ field: null, message: "Сервер API недоступен." }] }));
+    });
     request.pipe(proxy);
 }
 
@@ -47,7 +51,6 @@ http.createServer((request, response) => {
     }
 
     if (requestPath === "/") requestPath = "/templates/table.html";
-    if (requestPath.startsWith("/static/")) requestPath = requestPath;
     const filePath = path.resolve(__dirname, `.${requestPath}`);
     const relativePath = path.relative(__dirname, filePath);
     const root = relativePath.split(path.sep)[0];

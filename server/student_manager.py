@@ -1,4 +1,4 @@
-from server.storage import read_students, update_students
+from server.store import _load_students, _update_students, _students_lock
 
 
 def _student_with_string_isu(key, student):
@@ -9,14 +9,17 @@ def _student_with_string_isu(key, student):
 
 def get_student_by_id(isu):
     key = str(isu)
-    for student in read_students():
+    with _students_lock:
+        students = _load_students()
+    for student in students:
         if str(student.get("isu")) == key:
             return _student_with_string_isu(key, student)
     return None
 
 
 def get_all_students():
-    students = read_students()
+    with _students_lock:
+        students = _load_students()
     return [_student_with_string_isu(student.get("isu"), student) for student in students]
 
 
@@ -43,7 +46,7 @@ def create_student(student):
         students.append(value)
         return True, value
 
-    return update_students(add_student)
+    return _update_students(add_student)
 
 
 def update_student(isu, updates, validate):
@@ -68,7 +71,7 @@ def update_student(isu, updates, validate):
         students[index] = updated
         return True, ("updated", updated)
 
-    return update_students(change_student)
+    return _update_students(change_student)
 
 
 def delete_student_by_id(isu):
@@ -81,4 +84,4 @@ def delete_student_by_id(isu):
         del students[index]
         return True, True
 
-    return update_students(remove_student)
+    return _update_students(remove_student)

@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException, Request, Response
 
-from server.students import create_student, delete_student_by_id, get_all_students, get_student_by_id, students_filters, update_student
-from server.validator import validate_filters, validate_student
+from server.filter_validator import validate_filters
+from server.student_manager import create_student, delete_student_by_id, get_all_students, get_student_by_id, students_filters, update_student
+from server.validator import validate_student
 
 api_router = APIRouter()
 

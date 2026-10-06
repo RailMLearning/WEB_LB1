@@ -42,3 +42,8 @@ document.getElementById("confirm-delete")?.addEventListener("click", async () =>
 for (const button of document.querySelectorAll?.("[data-close]") || []) {
     button.addEventListener("click", () => closeModal(button.dataset.close));
 }
+
+document.getElementById("ok")?.addEventListener("click", () => {
+    selectedDeleteIsu = null;
+    closeModal("confirm-modal");
+});
