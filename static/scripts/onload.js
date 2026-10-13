@@ -1,3 +1,1 @@
-window.onload = function(){
-    updateTables()
-}
+window.addEventListener("DOMContentLoaded", initializeAuth);

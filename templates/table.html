@@ -15,6 +15,23 @@
 
 <body>
     <main>
+        <section class="wrapper wrapper-form" id="auth-panel">
+            <h1>Студенты общежития</h1>
+            <form id="auth-form">
+                <label>Логин <input name="username" required minlength="3" maxlength="40" autocomplete="username"></label>
+                <label id="email-label" hidden>Почта <input name="email" type="email" maxlength="254" autocomplete="email"></label>
+                <label>Пароль <input name="password" type="password" required minlength="8" autocomplete="current-password"></label>
+                <label><input id="register-mode" type="checkbox"> Создать аккаунт</label>
+                <p id="auth-error" role="alert"></p>
+                <button class="btn" id="auth-submit" type="submit">Войти</button>
+            </form>
+            <a href="/docs">Документация API</a>
+        </section>
+        <div class="wrapper session-panel" id="session-panel" hidden>
+            <span id="current-user"></span>
+            <a href="/docs">API</a>
+            <button class="btn" id="logout-button" type="button">Выйти</button>
+        </div>
 
         <div class="modal" id="form-modal">
             <div class="wrapper wrapper-form">
@@ -72,8 +89,9 @@
             </div>
         </div>
 
-        <div class="wrapper wrapper-table">
+        <div class="wrapper wrapper-table" id="students-panel" hidden>
             <form id="student-filters" class="student-filters">
+                <label>Поиск <input name="q" maxlength="150" type="search"></label>
                 <label>ИСУ <input name="isu" type="text"></label>
                 <label>ФИО <input name="fio" type="text"></label>
                 <label>Группа <input name="group" type="text"></label>
@@ -82,6 +100,8 @@
                 <label>Срок заселения <input name="expdate" type="date"></label>
                 <label>Иностранец <select name="foreigner"><option value="">Все</option><option value="true">Да</option><option value="false">Нет</option></select></label>
                 <label>Заметки <input name="notes" type="text"></label>
+                <label>Сортировка <select name="sort"><option value="isu">ИСУ</option><option value="fio">ФИО</option><option value="grid">Группа</option><option value="dnum">Общежитие</option><option value="rnum">Комната</option><option value="expdate">Дата</option></select></label>
+                <label>Порядок <select name="order"><option value="asc">По возрастанию</option><option value="desc">По убыванию</option></select></label>
                 <button type="submit" class="btn">Найти</button>
                 <button type="reset" class="btn">Сбросить</button>
             </form>
@@ -104,6 +124,12 @@
             </div>
 
             <div class="table-actions">
+                <div class="pagination">
+                    <button type="button" class="btn" id="page-prev">Назад</button>
+                    <span id="page-status"></span>
+                    <button type="button" class="btn" id="page-next">Далее</button>
+                    <label>На странице <select id="page-size"><option>10</option><option selected>20</option><option>50</option><option>100</option></select></label>
+                </div>
                 <button type="button" class="btn btn-add" id="btn-add"
                     onclick="openModal('form-modal')">Добавить</button>
             </div>
@@ -114,6 +140,7 @@
     <script src="/static/scripts/modal.js"></script>
     <script src="/static/scripts/validation.js"></script>
     <script src="/static/scripts/utils.js"></script>
+    <script src="/static/scripts/auth.js"></script>
     <script src="/static/scripts/studentStore.js"></script>
     <script src="/static/scripts/studentTable.js"></script>
     <script src="/static/scripts/studentDetails.js"></script>

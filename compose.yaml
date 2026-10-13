@@ -1,17 +1,2 @@
-services:
-  web:
-    build: .
-    ports:
-      - "8000:8000"
-    volumes:
-      - students:/data
-  frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile.frontend
-    ports:
-      - "8080:8080"
-    depends_on:
-      - web
-volumes:
-  students:
+include:
+  - compose.lab3.yaml

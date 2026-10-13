@@ -16,6 +16,8 @@ const contentTypes = {
     ".webmanifest": "application/manifest+json"
 };
 const roots = new Set(["templates", "static", "icons"]);
+const swaggerRoot = require("swagger-ui-dist").absolutePath();
+const swaggerFiles = new Set(["swagger-ui.css", "swagger-ui-bundle.js"]);
 
 function proxyApi(request, response) {
     const proxy = http.request({
@@ -25,7 +27,10 @@ function proxyApi(request, response) {
         method: request.method,
         headers: { ...request.headers, host: `${backendHost}:${backendPort}` }
     }, backendResponse => {
-        response.writeHead(backendResponse.statusCode, backendResponse.headers);
+        const headers = { ...backendResponse.headers };
+        const backendOrigin = `http://${backendHost}:${backendPort}`;
+        if (headers.location?.startsWith(`${backendOrigin}/`)) headers.location = headers.location.slice(backendOrigin.length);
+        response.writeHead(backendResponse.statusCode, headers);
         backendResponse.pipe(response);
     });
     proxy.on("error", () => {
@@ -50,6 +55,16 @@ http.createServer((request, response) => {
         return;
     }
 
+    if (requestPath === "/docs" || requestPath === "/docs/") requestPath = "/templates/docs.html";
+    if (requestPath.startsWith("/swagger/")) {
+        const name = requestPath.slice("/swagger/".length);
+        if (!swaggerFiles.has(name)) return response.writeHead(404).end();
+        fs.readFile(path.join(swaggerRoot, name), (error, data) => {
+            if (error) return response.writeHead(404).end();
+            response.writeHead(200, { "Content-Type": contentTypes[path.extname(name)] }).end(data);
+        });
+        return;
+    }
     if (requestPath === "/") requestPath = "/templates/table.html";
     const filePath = path.resolve(__dirname, `.${requestPath}`);
     const relativePath = path.relative(__dirname, filePath);

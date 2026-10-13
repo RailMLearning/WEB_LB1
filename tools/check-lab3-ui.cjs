@@ -1,0 +1,91 @@
+const { chromium } = require("playwright");
+const fs = require("node:fs");
+const path = require("node:path");
+const crypto = require("node:crypto");
+const assert = require("node:assert/strict");
+
+const root = path.resolve(__dirname, "..");
+const env = Object.fromEntries(fs.readFileSync(path.join(root, ".env"), "utf8").split(/\r?\n/).filter(line => line.includes("=") && !line.startsWith("#")).map(line => [line.slice(0, line.indexOf("=")), line.slice(line.indexOf("=") + 1)]));
+const base = process.env.LAB3_URL || "http://127.0.0.1:8080";
+
+async function main() {
+    const browser = await chromium.launch({ headless: true, executablePath: process.env.BROWSER_PATH });
+    const context = await browser.newContext();
+    const page = await context.newPage();
+    const errors = [];
+    page.on("pageerror", error => errors.push(error.message));
+    let refreshCount = 0;
+    page.on("request", request => { if (request.url().endsWith("/api/auth/refresh")) refreshCount += 1; });
+    const isu = String(9000000 + crypto.randomInt(900000));
+    let adminAccess;
+    try {
+        await page.goto(base);
+        await page.locator("#auth-panel").waitFor({ state: "visible" });
+        assert.equal(await page.locator("#students-panel").isVisible(), false);
+        await page.locator("#auth-form [name=username]").fill(env.ADMIN_USERNAME);
+        await page.locator("#auth-form [name=password]").fill(env.ADMIN_PASSWORD);
+        await page.locator("#auth-submit").click();
+        await page.locator("#students-panel").waitFor({ state: "visible" });
+        adminAccess = await page.evaluate(() => JSON.parse(sessionStorage.getItem("studentAuth")).accessToken);
+        assert.equal(await page.locator("#btn-add").isVisible(), true);
+        await page.locator("#btn-add").click();
+        for (const [field, value] of Object.entries({ isu, fio: "Тест Браузер", grid: "M3301", dnum: "8", rnum: "42", expdate: "2026-10-12", notes: "browser-test" })) await page.locator(`#studform [name=${field}]`).fill(value);
+        await page.locator("#studform [type=submit]").click();
+        await page.locator(`#students-tbody [data-isu="${isu}"][data-action=more]`).waitFor();
+        await page.locator(`#students-tbody [data-isu="${isu}"][data-action=more]`).click();
+        await page.locator("#more-info").getByText("Тест Браузер", { exact: true }).waitFor();
+        await page.locator("#more-info-modal #close").click();
+        await page.locator(`#students-tbody [data-isu="${isu}"][data-action=edit]`).click();
+        await page.locator("#form-modal").waitFor({ state: "visible" });
+        await page.locator("#studform [name=rnum]").fill("43");
+        await page.locator("#studform [type=submit]").click();
+        await page.locator("#form-modal").waitFor({ state: "hidden" });
+        await page.reload();
+        await page.locator(`#students-tbody [data-isu="${isu}"]`).first().waitFor();
+        assert.match(await page.locator(`#students-tbody tr:has([data-isu="${isu}"])`).textContent(), /43/);
+        console.log("OK admin login, create, details, edit and reload");
+        const stored = await page.evaluate(() => JSON.parse(sessionStorage.getItem("studentAuth")));
+        adminAccess = stored.accessToken;
+        const original = JSON.parse(Buffer.from(stored.accessToken.split(".")[1], "base64url").toString());
+        original.exp = Math.floor(Date.now() / 1000) - 5;
+        const header = Buffer.from(JSON.stringify({ alg: "HS256" })).toString("base64url");
+        const payload = Buffer.from(JSON.stringify(original)).toString("base64url");
+        const unsigned = `${header}.${payload}`;
+        const expired = `${unsigned}.${crypto.createHmac("sha256", env.JWT_SECRET).update(unsigned).digest("base64url")}`;
+        await page.evaluate(token => { authTokens.accessToken = token; }, expired);
+        const before = refreshCount;
+        const results = await page.evaluate(async () => Promise.all([getAllStudents(), getAllStudents(), getStudentById(document.querySelector("#students-tbody [data-isu]").dataset.isu)]));
+        assert.equal(results.length, 3);
+        assert.equal(refreshCount - before, 1);
+        console.log("OK expired access triggers one refresh for concurrent JS calls");
+        await page.locator(`#students-tbody [data-isu="${isu}"][data-action=delete]`).click();
+        await page.locator("#confirm-delete").click();
+        await page.locator(`#students-tbody [data-isu="${isu}"]`).first().waitFor({ state: "hidden" });
+        await page.locator("#logout-button").click();
+        await page.locator("#auth-panel").waitFor({ state: "visible" });
+        assert.equal(await page.evaluate(() => sessionStorage.getItem("studentAuth")), null);
+        const username = "browser" + Date.now();
+        await page.locator("#register-mode").check();
+        await page.locator("#auth-form [name=username]").fill(username);
+        await page.locator("#auth-form [name=email]").fill(username + "@example.com");
+        await page.locator("#auth-form [name=password]").fill("BrowserPassword1!");
+        await page.locator("#auth-submit").click();
+        await page.locator("#students-panel").waitFor({ state: "visible" });
+        assert.equal(await page.locator("#btn-add").isVisible(), false);
+        assert.equal(await page.locator("#students-tbody [data-action=edit], #students-tbody [data-action=delete]").count(), 0);
+        const denied = await page.evaluate(async () => (await authorizedFetch("/api/requests/123456", { method: "DELETE" })).status);
+        assert.equal(denied, 403);
+        console.log("OK registration, USER controls and backend restriction");
+        await page.goto(base + "/docs");
+        await page.locator(".swagger-ui .info .title").waitFor();
+        assert.match(await page.locator(".swagger-ui .info .title").textContent(), /Hibernate/);
+        console.log("OK local Swagger UI renders specification");
+        assert.deepEqual(errors, []);
+        console.log("PASSED browser checks, no JS errors");
+    } finally {
+        if (adminAccess) await context.request.delete(base + "/api/requests/" + isu, { headers: { Authorization: "Bearer " + adminAccess } });
+        await browser.close();
+    }
+}
+
+main().catch(error => { console.error(error); process.exitCode = 1; });

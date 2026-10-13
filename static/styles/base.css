@@ -13,10 +13,42 @@ body {
 
 main {
   display: flex;
+  flex-direction: column;
+  gap: 16px;
   justify-content: center;
   align-items: center;
   min-height: 100dvh;
   padding: clamp(10px, 2vw, 24px);
+}
+
+[hidden] {
+  display: none !important;
+}
+
+#auth-form {
+  display: grid;
+  gap: 14px;
+}
+
+#auth-form label {
+  display: grid;
+  gap: 6px;
+}
+
+#auth-form input {
+  padding: 8px;
+}
+
+.session-panel, .pagination {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+#auth-error {
+  color: #a00;
+  white-space: pre-line;
 }
 
 .modal {
@@ -28,6 +60,7 @@ main {
   align-items: center;
   z-index: 9999;
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
   transition: opacity 0.3s ease-in-out;
   padding: 16px;
@@ -35,6 +68,7 @@ main {
 
 .modal.active {
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
 }
 

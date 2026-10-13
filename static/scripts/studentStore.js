@@ -24,23 +24,25 @@ async function readStudentResponse(response) {
 async function getAllStudents(filters = {}) {
     const entries = Object.entries(filters).filter(([, value]) => value !== "");
     let response;
-    if (entries.length > 3) {
-        response = await fetch("/api/requests", {
+    const filterCount = entries.filter(([field]) => !["page", "size", "sort", "order"].includes(field)).length;
+    if (filterCount > 3) {
+        response = await authorizedFetch("/api/requests", {
             method: "QUERY",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(Object.fromEntries(entries))
         });
     } else {
         const query = new URLSearchParams(entries);
-        response = await fetch(`/api/requests${query.size ? `?${query}` : ""}`);
+        response = await authorizedFetch(`/api/requests${query.size ? `?${query}` : ""}`);
     }
     const students = await readStudentResponse(response);
     if (!Array.isArray(students)) throw new Error("Сервер вернул список в неправильном формате.");
+    students.total = Number(response.headers.get("X-Total-Count") ?? students.length);
     return students;
 }
 
 async function getStudentById(isu) {
-    const response = await fetch(`/api/requests/${encodeURIComponent(isu)}`);
+    const response = await authorizedFetch(`/api/requests/${encodeURIComponent(isu)}`);
     if (response.status === 404) return null;
     return readStudentResponse(response);
 }
@@ -48,7 +50,7 @@ async function getStudentById(isu) {
 async function saveStudent(student, originalIsu = null) {
     const editing = originalIsu !== null;
     const url = editing ? `/api/requests/${encodeURIComponent(originalIsu)}` : "/api/requests";
-    const response = await fetch(url, {
+    const response = await authorizedFetch(url, {
         method: editing ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(student)
@@ -57,6 +59,6 @@ async function saveStudent(student, originalIsu = null) {
 }
 
 async function deleteStudentById(isu) {
-    const response = await fetch(`/api/requests/${encodeURIComponent(isu)}`, { method: "DELETE" });
+    const response = await authorizedFetch(`/api/requests/${encodeURIComponent(isu)}`, { method: "DELETE" });
     return readStudentResponse(response);
 }

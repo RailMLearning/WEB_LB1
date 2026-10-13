@@ -1,0 +1,1020 @@
+{
+  "info": {
+    "name": "Лабораторная 3 — Java EE / Hibernate",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8080"
+    },
+    {
+      "key": "adminUsername",
+      "value": "admin"
+    },
+    {
+      "key": "adminPassword",
+      "value": ""
+    },
+    {
+      "key": "userPassword",
+      "value": "TestPassword1!"
+    },
+    {
+      "key": "username",
+      "value": ""
+    },
+    {
+      "key": "email",
+      "value": ""
+    },
+    {
+      "key": "isu",
+      "value": ""
+    },
+    {
+      "key": "adminAccess",
+      "value": ""
+    },
+    {
+      "key": "adminRefresh",
+      "value": ""
+    },
+    {
+      "key": "userAccess",
+      "value": ""
+    },
+    {
+      "key": "userRefresh",
+      "value": ""
+    },
+    {
+      "key": "oldRefresh",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Регистрация USER",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/register",
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"{{username}}\", \"email\": \"{{email}}\", \"password\": \"{{userPassword}}\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "const suffix = String(Date.now());",
+              "pm.collectionVariables.set(\"username\", \"lab\" + suffix);",
+              "pm.collectionVariables.set(\"email\", \"lab\" + suffix + \"@example.com\");",
+              "pm.collectionVariables.set(\"isu\", \"0\" + suffix.slice(-5));",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Вход USER",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/login",
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"{{username}}\", \"password\": \"{{userPassword}}\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "const tokenData = pm.response.json();",
+              "pm.collectionVariables.set(\"userAccess\", tokenData.accessToken);",
+              "pm.collectionVariables.set(\"userRefresh\", tokenData.refreshToken);",
+              "pm.test(\"USER role\", () => pm.expect(tokenData.user.role).to.eql(\"USER\"));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 Вход ADMIN",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/login",
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"{{adminUsername}}\", \"password\": \"{{adminPassword}}\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "const tokenData = pm.response.json();",
+              "pm.collectionVariables.set(\"adminAccess\", tokenData.accessToken);",
+              "pm.collectionVariables.set(\"adminRefresh\", tokenData.refreshToken);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Запрос без входа",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/requests",
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test(\"HTTP 401\", () => pm.response.to.have.status(401));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Текущий USER",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/auth/me",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{userAccess}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 Создать студента ADMIN",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/requests",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminAccess}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"isu\": \"{{isu}}\", \"fio\": \"Анна-Мария\", \"grid\": \"M3301\", \"dnum\": 8, \"rnum\": 42, \"expdate\": \"2026-10-12\", \"foreigner\": false, \"notes\": \"Postman lab3\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 USER читает досье",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/requests/{{isu}}",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{userAccess}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 USER не может создавать",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/requests",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{userAccess}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"isu\": \"{{isu}}\", \"fio\": \"Анна-Мария\", \"grid\": \"M3301\", \"dnum\": 8, \"rnum\": 42, \"expdate\": \"2026-10-12\", \"foreigner\": false, \"notes\": \"Postman lab3\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 USER не может менять",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/requests/{{isu}}",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{userAccess}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"rnum\": 43}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 USER не может удалять",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/api/requests/{{isu}}",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{userAccess}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "11 Частичное изменение",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/requests/{{isu}}",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminAccess}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"rnum\": 43, \"notes\": \"Изменено\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "12 Полная замена",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/requests/{{isu}}",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminAccess}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"isu\": \"{{isu}}\", \"fio\": \"Анна-Мария\", \"grid\": \"M3301\", \"dnum\": 8, \"rnum\": 42, \"expdate\": \"2026-10-12\", \"foreigner\": false, \"notes\": \"Postman lab3\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "13 GET фильтры сортировка страница",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/requests?group=M3301&dormitory=8&sort=isu&order=asc&page=0&size=10",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{userAccess}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Pagination headers\", () => pm.expect(pm.response.headers.has(\"X-Total-Count\")).to.eql(true));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "14 QUERY",
+      "request": {
+        "method": "QUERY",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/requests",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{userAccess}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"group\": \"M3301\", \"dormitory\": 8, \"rnum\": 42, \"foreigner\": false, \"page\": 0, \"size\": 10}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "15 Поиск",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/requests?q=Postman&sort=fio&order=desc&page=0&size=5",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{userAccess}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "16 Конфликт ИСУ",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/requests",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminAccess}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"isu\": \"{{isu}}\", \"fio\": \"Анна-Мария\", \"grid\": \"M3301\", \"dnum\": 8, \"rnum\": 42, \"expdate\": \"2026-10-12\", \"foreigner\": false, \"notes\": \"Postman lab3\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test(\"HTTP 409\", () => pm.response.to.have.status(409));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "17 Серверная проверка",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/requests/{{isu}}",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminAccess}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"fio\": \"Иван2\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test(\"HTTP 422\", () => pm.response.to.have.status(422));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "18 Нельзя выбрать себе ADMIN",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/register",
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"{{username}}\", \"email\": \"{{email}}\", \"password\": \"{{userPassword}}\", \"role\": \"ADMIN\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test(\"HTTP 422\", () => pm.response.to.have.status(422));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "19 Обновление JWT",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/refresh",
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"refreshToken\": \"{{adminRefresh}}\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.collectionVariables.set(\"oldRefresh\", pm.collectionVariables.get(\"adminRefresh\"));",
+              "const tokenData = pm.response.json();",
+              "pm.collectionVariables.set(\"adminAccess\", tokenData.accessToken);",
+              "pm.collectionVariables.set(\"adminRefresh\", tokenData.refreshToken);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "20 Старый refresh уже использован",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/refresh",
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"refreshToken\": \"{{oldRefresh}}\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test(\"HTTP 401\", () => pm.response.to.have.status(401));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "21 Refresh нельзя применять как access",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/requests",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminRefresh}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test(\"HTTP 401\", () => pm.response.to.have.status(401));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "22 Удалить ADMIN",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/api/requests/{{isu}}",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminAccess}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test(\"HTTP 204\", () => pm.response.to.have.status(204));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "23 Удалённый студент",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/requests/{{isu}}",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{userAccess}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "24 Выход USER",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/logout",
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"refreshToken\": \"{{userRefresh}}\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test(\"HTTP 204\", () => pm.response.to.have.status(204));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "25 Отозванный refresh",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/refresh",
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"refreshToken\": \"{{userRefresh}}\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test(\"HTTP 401\", () => pm.response.to.have.status(401));",
+              "}"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+embed-server --server-config=standalone.xml --std-out=echo
+module add --name=org.postgresql --resources=/opt/jboss/postgresql.jar --dependencies=java.sql,jakarta.transaction.api
+/subsystem=datasources/jdbc-driver=postgresql:add(driver-name=postgresql,driver-module-name=org.postgresql,driver-class-name=org.postgresql.Driver)
+data-source add --name=StudentsDS --jndi-name=java:jboss/datasources/StudentsDS --driver-name=postgresql --connection-url="${env.DB_URL:jdbc:postgresql://db:5432/students}" --user-name="${env.DB_USER:students}" --password="${env.DB_PASSWORD:unset}" --min-pool-size=2 --max-pool-size=10 --enabled=true
+stop-embedded-server
