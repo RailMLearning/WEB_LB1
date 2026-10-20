@@ -15,8 +15,14 @@ import ru.itmo.students.validation.InputValidator;
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed({"ADMIN", "USER"})
 public class StudentResource {
-    @Inject StudentService service;
-    @Inject InputValidator validator;
+    private final StudentService service;
+    private final InputValidator validator;
+
+    @Inject
+    public StudentResource(StudentService service, InputValidator validator){
+        this.service = service;
+        this.validator = validator;
+    }
 
     @GET
     public Response list(@Context UriInfo uri) {

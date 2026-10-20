@@ -15,10 +15,9 @@ import ru.itmo.students.model.UserAccount;
 
 @ApplicationScoped
 public class JwtService {
-    @Inject AppConfig config;
+    private final AppConfig config;
 
-    public JwtService() { }
-
+    @Inject
     public JwtService(AppConfig config) {
         this.config = config;
     }

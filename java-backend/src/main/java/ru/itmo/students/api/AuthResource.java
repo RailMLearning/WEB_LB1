@@ -13,8 +13,14 @@ import ru.itmo.students.validation.InputValidator;
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
 public class AuthResource {
-    @Inject AuthService service;
-    @Inject InputValidator validator;
+    private final AuthService service;
+    private final InputValidator validator;
+
+    @Inject
+    public AuthResource(AuthService service, InputValidator validator){
+        this.service = service;
+        this.validator = validator;
+    }
 
     @POST @Path("/register") @Consumes(MediaType.APPLICATION_JSON)
     public Response register(String body) {

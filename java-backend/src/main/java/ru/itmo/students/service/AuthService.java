@@ -19,12 +19,27 @@ import ru.itmo.students.validation.InputValidator;
 @ApplicationScoped
 @Transactional
 public class AuthService {
-    @Inject UserRepository users;
-    @Inject RefreshRepository sessions;
-    @Inject InputValidator validator;
-    @Inject Passwords passwords;
-    @Inject JwtService jwt;
-    @Inject AppConfig config;
+    private final UserRepository users;
+    private final RefreshRepository sessions;
+    private final InputValidator validator;
+    private final Passwords passwords;
+    private final JwtService jwt;
+    private final AppConfig config;
+
+    @Inject
+    public AuthService(UserRepository users,
+                        RefreshRepository sessions,
+                        InputValidator validator,
+                        Passwords passwords,
+                        JwtService jwt,
+                        AppConfig config){
+        this.users = users;
+        this.sessions = sessions;
+        this.validator = validator;
+        this.passwords = passwords;
+        this.jwt = jwt;
+        this.config = config;
+    }
 
     public UserDto register(JsonObject data) {
         validator.known(data.keySet(), Set.of("username", "email", "password"));

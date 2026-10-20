@@ -9,7 +9,12 @@ import java.util.logging.Logger;
 @Singleton
 @Startup
 public class AdminInitializer {
-    @Inject AuthService auth;
+    private final AuthService auth;
+
+    @Inject 
+    public AdminInitializer(AuthService auth){
+        this.auth = auth;
+    } 
 
     @PostConstruct
     public void initialize() {

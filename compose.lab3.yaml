@@ -1,4 +1,17 @@
 services:
+  migrate:
+    image: flyway/flyway:latest
+    command: -connectRetries=60 migrate
+    environment:
+      FLYWAY_URL: jdbc:postgresql://db:5432/${DB_NAME:-students}
+      FLYWAY_USER: ${DB_USER:-students}
+      FLYWAY_PASSWORD: ${DB_PASSWORD:?Run tools/setup-env.ps1}
+      FLYWAY_LOCATIONS: filesystem:/flyway/sql
+    volumes:
+      - ./java-backend/docker/migrations:/flyway/sql:ro
+    depends_on:
+      db:
+        condition: service_healthy
   db:
     image: postgres:17-alpine
     environment:
@@ -7,7 +20,6 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD:?Run tools/setup-env.ps1}
     volumes:
       - lab3-postgres:/var/lib/postgresql/data
-      - ./java-backend/docker/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 5s
@@ -33,6 +45,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost:8080/api/health >/dev/null"]
       interval: 5s
