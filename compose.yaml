@@ -1,2 +1,2 @@
 include:
-  - compose.lab3.yaml
+    - compose.lab3.yaml

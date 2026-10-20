@@ -17,10 +17,12 @@ public class StudentService {
     @Inject StudentRepository repository;
     @Inject InputValidator validator;
 
-    public record Page(List<StudentDto> students, long total) { }
+    public record Page(List<StudentDto> students, long total) {}
 
     public Page list(StudentQuery query) {
-        return new Page(repository.list(query).stream().map(StudentDto::from).toList(), repository.count(query));
+        return new Page(
+                repository.list(query).stream().map(StudentDto::from).toList(),
+                repository.count(query));
     }
 
     public StudentDto get(String isu) {
@@ -29,7 +31,8 @@ public class StudentService {
 
     public StudentDto create(JsonObject data) {
         StudentDto dto = validator.student(data, null, false);
-        if (repository.find(dto.isu) != null) throw new ApiException(409, "isu", "Студент с таким ИСУ уже существует.");
+        if (repository.find(dto.isu) != null)
+            throw new ApiException(409, "isu", "Студент с таким ИСУ уже существует.");
         Student entity = new Student();
         dto.apply(entity);
         repository.save(entity);
@@ -40,7 +43,8 @@ public class StudentService {
         Student entity = required(isu);
         StudentDto dto = validator.student(data, partial ? StudentDto.from(entity) : null, partial);
         Student duplicate = repository.find(dto.isu);
-        if (duplicate != null && !duplicate.id.equals(entity.id)) throw new ApiException(409, "isu", "Студент с таким ИСУ уже существует.");
+        if (duplicate != null && !duplicate.id.equals(entity.id))
+            throw new ApiException(409, "isu", "Студент с таким ИСУ уже существует.");
         dto.apply(entity);
         repository.flush();
         return StudentDto.from(entity);

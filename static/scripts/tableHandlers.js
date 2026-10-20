@@ -2,7 +2,10 @@ var selectedDeleteIsu = null;
 var selectionRequest = 0;
 
 const addButton = document.getElementById("btn-add");
-addButton?.addEventListener("click", () => { selectionRequest += 1; prepareStudentForm(); });
+addButton?.addEventListener("click", () => {
+    selectionRequest += 1;
+    prepareStudentForm();
+});
 
 document.getElementById("table-students")?.addEventListener("click", async event => {
     const button = event.target.closest?.("button[data-action]");
@@ -35,8 +38,11 @@ document.getElementById("confirm-delete")?.addEventListener("click", async () =>
         selectedDeleteIsu = null;
         closeModal("confirm-modal");
         await updateTables();
-    } catch (error) { document.getElementById("table-status").textContent = error.message; }
-    finally { saving = false; }
+    } catch (error) {
+        document.getElementById("table-status").textContent = error.message;
+    } finally {
+        saving = false;
+    }
 });
 
 for (const button of document.querySelectorAll?.("[data-close]") || []) {

@@ -15,7 +15,11 @@ public class StudentRepository {
     private EntityManager em;
 
     public Student find(String isu) {
-        return em.createQuery("select s from Student s where s.isu = :isu", Student.class).setParameter("isu", isu).getResultStream().findFirst().orElse(null);
+        return em.createQuery("select s from Student s where s.isu = :isu", Student.class)
+                .setParameter("isu", isu)
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
     }
 
     public void save(Student student) {
@@ -37,8 +41,15 @@ public class StudentRepository {
         CriteriaQuery<Student> query = cb.createQuery(Student.class);
         Root<Student> root = query.from(Student.class);
         query.select(root).where(predicates(cb, root, input));
-        query.orderBy(input.descending() ? cb.desc(root.get(input.sort())) : cb.asc(root.get(input.sort())), cb.asc(root.get("id")));
-        return em.createQuery(query).setFirstResult(input.page() * input.size()).setMaxResults(input.size()).getResultList();
+        query.orderBy(
+                input.descending()
+                        ? cb.desc(root.get(input.sort()))
+                        : cb.asc(root.get(input.sort())),
+                cb.asc(root.get("id")));
+        return em.createQuery(query)
+                .setFirstResult(input.page() * input.size())
+                .setMaxResults(input.size())
+                .getResultList();
     }
 
     public long count(StudentQuery input) {
@@ -51,12 +62,30 @@ public class StudentRepository {
 
     private Predicate[] predicates(CriteriaBuilder cb, Root<Student> root, StudentQuery input) {
         List<Predicate> values = new ArrayList<>();
-        input.filters().forEach((field, value) -> {
-            if (field.equals("fio") || field.equals("notes")) values.add(cb.like(cb.lower(root.get(field)), like(value.toString()), '\\'));
-            else values.add(cb.equal(root.get(field), field.equals("expdate") ? LocalDate.parse(value.toString()) : value));
-        });
+        input.filters()
+                .forEach(
+                        (field, value) -> {
+                            if (field.equals("fio") || field.equals("notes"))
+                                values.add(
+                                        cb.like(
+                                                cb.lower(root.get(field)),
+                                                like(value.toString()),
+                                                '\\'));
+                            else
+                                values.add(
+                                        cb.equal(
+                                                root.get(field),
+                                                field.equals("expdate")
+                                                        ? LocalDate.parse(value.toString())
+                                                        : value));
+                        });
         if (!input.search().isEmpty()) {
-            values.add(cb.or(cb.like(cb.lower(root.get("fio")), like(input.search()), '\\'), cb.like(cb.lower(root.get("grid")), like(input.search()), '\\'), cb.like(root.get("isu"), like(input.search()), '\\'), cb.like(cb.lower(root.get("notes")), like(input.search()), '\\')));
+            values.add(
+                    cb.or(
+                            cb.like(cb.lower(root.get("fio")), like(input.search()), '\\'),
+                            cb.like(cb.lower(root.get("grid")), like(input.search()), '\\'),
+                            cb.like(root.get("isu"), like(input.search()), '\\'),
+                            cb.like(cb.lower(root.get("notes")), like(input.search()), '\\')));
         }
         return values.toArray(Predicate[]::new);
     }

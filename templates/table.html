@@ -1,152 +1,459 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1"
+        />
+        <link
+            rel="shortcut icon"
+            href="/static/icons/favicon.ico"
+            type="image/x-icon"
+        />
+        <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="/static/icons/apple-touch-icon.png"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/static/icons/favicon-32x32.png"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/static/icons/favicon-16x16.png"
+        />
+        <link
+            rel="manifest"
+            href="/static/icons/site.webmanifest"
+        />
+        <link
+            rel="stylesheet"
+            href="/static/styles/style.css"
+        />
+        <title>Управление студентами</title>
+    </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" href="/static/icons/favicon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" sizes="180x180" href="/static/icons/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/static/icons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/static/icons/favicon-16x16.png">
-    <link rel="manifest" href="/static/icons/site.webmanifest">
-    <link rel="stylesheet" href="/static/styles/style.css">
-    <title>Управление студентами</title>
-</head>
-
-<body>
-    <main>
-        <section class="wrapper wrapper-form" id="auth-panel">
-            <h1>Студенты общежития</h1>
-            <form id="auth-form">
-                <label>Логин <input name="username" required minlength="3" maxlength="40" autocomplete="username"></label>
-                <label id="email-label" hidden>Почта <input name="email" type="email" maxlength="254" autocomplete="email"></label>
-                <label>Пароль <input name="password" type="password" required minlength="8" autocomplete="current-password"></label>
-                <label><input id="register-mode" type="checkbox"> Создать аккаунт</label>
-                <p id="auth-error" role="alert"></p>
-                <button class="btn" id="auth-submit" type="submit">Войти</button>
-            </form>
-            <a href="/docs">Документация API</a>
-        </section>
-        <div class="wrapper session-panel" id="session-panel" hidden>
-            <span id="current-user"></span>
-            <a href="/docs">API</a>
-            <button class="btn" id="logout-button" type="button">Выйти</button>
-        </div>
-
-        <div class="modal" id="form-modal">
-            <div class="wrapper wrapper-form">
-                <form class="form-container" id="studform">
-                    <input name="isu" type="text" inputmode="numeric" pattern="[0-9]{5,7}" minlength="5" maxlength="7" placeholder="Номер ИСУ" aria-label="Номер ИСУ" class="form-input" required>
-                    <input name="fio" type="text" maxlength="150" placeholder="ФИО" aria-label="ФИО" class="form-input" required>
-                    <input name="grid" type="text" pattern="[A-Z][0-9]{4}[a-z]?" minlength="5" maxlength="6" placeholder="Группа" aria-label="Группа" class="form-input" required>
-                    <input name="dnum" type="number" min="1" step="1" placeholder="Номер общежития" aria-label="Номер общежития" class="form-input" required>
-                    <input name="rnum" type="number" min="1" step="1" placeholder="Комната" aria-label="Комната" class="form-input" required>
-                    <label for="student-expdate">Срок заселения (дата)</label>
-                    <input id="student-expdate" name="expdate" type="date" min="1900-01-01" max="9999-12-31" class="form-input" required>
-
-                    <label class="checkbox-label">
-                        <input name="foreigner" type="checkbox">
-                        <span>Иностранец</span>
-                    </label>
-
-                    <input name="notes" type="text" maxlength="500" placeholder="Заметки" aria-label="Заметки" class="form-input">
-                    <div id="error" role="alert">
-
-                    </div>
-                    <button type="submit" class="form-button" id="submit">Сохранить</button>
-                    <button type="button" class="form-button btn-secondary"
-                        onclick="closeModal('form-modal')">Закрыть</button>
+    <body>
+        <main>
+            <section
+                class="wrapper wrapper-form"
+                id="auth-panel"
+            >
+                <h1>Студенты общежития</h1>
+                <form id="auth-form">
+                    <label
+                        >Логин
+                        <input
+                            name="username"
+                            required
+                            minlength="3"
+                            maxlength="40"
+                            autocomplete="username"
+                    /></label>
+                    <label
+                        id="email-label"
+                        hidden
+                        >Почта
+                        <input
+                            name="email"
+                            type="email"
+                            maxlength="254"
+                            autocomplete="email"
+                    /></label>
+                    <label
+                        >Пароль
+                        <input
+                            name="password"
+                            type="password"
+                            required
+                            minlength="8"
+                            autocomplete="current-password"
+                    /></label>
+                    <label
+                        ><input
+                            id="register-mode"
+                            type="checkbox"
+                        />
+                        Создать аккаунт</label
+                    >
+                    <p
+                        id="auth-error"
+                        role="alert"
+                    ></p>
+                    <button
+                        class="btn"
+                        id="auth-submit"
+                        type="submit"
+                    >
+                        Войти
+                    </button>
                 </form>
+                <a href="/docs">Документация API</a>
+            </section>
+            <div
+                class="wrapper session-panel"
+                id="session-panel"
+                hidden
+            >
+                <span id="current-user"></span>
+                <a href="/docs">API</a>
+                <button
+                    class="btn"
+                    id="logout-button"
+                    type="button"
+                >
+                    Выйти
+                </button>
             </div>
-        </div>
 
-        <div class="modal" id="confirm-modal">
-            <div class="wrapper wrapper-window">
-                <h2>Подтвердить действие?</h2>
-                <p id="delete-description">Это нельзя будет отменить</p>
-                <div class="keyboard">
-                    <button type="button" class="btn" id="ok">Нет, не
-                        надо</button>
-                    <button type="button" class="btn btn-danger" id="confirm-delete">Да,
-                        без Б</button>
+            <div
+                class="modal"
+                id="form-modal"
+            >
+                <div class="wrapper wrapper-form">
+                    <form
+                        class="form-container"
+                        id="studform"
+                    >
+                        <input
+                            name="isu"
+                            type="text"
+                            inputmode="numeric"
+                            pattern="[0-9]{5,7}"
+                            minlength="5"
+                            maxlength="7"
+                            placeholder="Номер ИСУ"
+                            aria-label="Номер ИСУ"
+                            class="form-input"
+                            required
+                        />
+                        <input
+                            name="fio"
+                            type="text"
+                            maxlength="150"
+                            placeholder="ФИО"
+                            aria-label="ФИО"
+                            class="form-input"
+                            required
+                        />
+                        <input
+                            name="grid"
+                            type="text"
+                            pattern="[A-Z][0-9]{4}[a-z]?"
+                            minlength="5"
+                            maxlength="6"
+                            placeholder="Группа"
+                            aria-label="Группа"
+                            class="form-input"
+                            required
+                        />
+                        <input
+                            name="dnum"
+                            type="number"
+                            min="1"
+                            step="1"
+                            placeholder="Номер общежития"
+                            aria-label="Номер общежития"
+                            class="form-input"
+                            required
+                        />
+                        <input
+                            name="rnum"
+                            type="number"
+                            min="1"
+                            step="1"
+                            placeholder="Комната"
+                            aria-label="Комната"
+                            class="form-input"
+                            required
+                        />
+                        <label for="student-expdate">Срок заселения (дата)</label>
+                        <input
+                            id="student-expdate"
+                            name="expdate"
+                            type="date"
+                            min="1900-01-01"
+                            max="9999-12-31"
+                            class="form-input"
+                            required
+                        />
+
+                        <label class="checkbox-label">
+                            <input
+                                name="foreigner"
+                                type="checkbox"
+                            />
+                            <span>Иностранец</span>
+                        </label>
+
+                        <input
+                            name="notes"
+                            type="text"
+                            maxlength="500"
+                            placeholder="Заметки"
+                            aria-label="Заметки"
+                            class="form-input"
+                        />
+                        <div
+                            id="error"
+                            role="alert"
+                        ></div>
+                        <button
+                            type="submit"
+                            class="form-button"
+                            id="submit"
+                        >
+                            Сохранить
+                        </button>
+                        <button
+                            type="button"
+                            class="form-button btn-secondary"
+                            onclick="closeModal('form-modal')"
+                        >
+                            Закрыть
+                        </button>
+                    </form>
                 </div>
             </div>
-        </div>
 
-        <div class="modal" id="more-info-modal">
-            <div class="wrapper wrapper-window">
-                <h2>Подробная информация:</h2>
-                <p id="student-details-status" role="status"></p>
+            <div
+                class="modal"
+                id="confirm-modal"
+            >
+                <div class="wrapper wrapper-window">
+                    <h2>Подтвердить действие?</h2>
+                    <p id="delete-description">Это нельзя будет отменить</p>
+                    <div class="keyboard">
+                        <button
+                            type="button"
+                            class="btn"
+                            id="ok"
+                        >
+                            Нет, не надо
+                        </button>
+                        <button
+                            type="button"
+                            class="btn btn-danger"
+                            id="confirm-delete"
+                        >
+                            Да, без Б
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="modal"
+                id="more-info-modal"
+            >
+                <div class="wrapper wrapper-window">
+                    <h2>Подробная информация:</h2>
+                    <p
+                        id="student-details-status"
+                        role="status"
+                    ></p>
+                    <div class="table-scroll-container">
+                        <table
+                            class="table-students table-minimized student-details-table"
+                            aria-label="Досье студента"
+                        >
+                            <tbody id="more-info"></tbody>
+                        </table>
+                    </div>
+                    <div class="ok-container">
+                        <button
+                            type="button"
+                            class="btn btn-add"
+                            id="close"
+                            onclick="closeModal('more-info-modal')"
+                        >
+                            ОК
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="wrapper wrapper-table"
+                id="students-panel"
+                hidden
+            >
+                <form
+                    id="student-filters"
+                    class="student-filters"
+                >
+                    <label
+                        >Поиск
+                        <input
+                            name="q"
+                            maxlength="150"
+                            type="search"
+                    /></label>
+                    <label
+                        >ИСУ
+                        <input
+                            name="isu"
+                            type="text"
+                    /></label>
+                    <label
+                        >ФИО
+                        <input
+                            name="fio"
+                            type="text"
+                    /></label>
+                    <label
+                        >Группа
+                        <input
+                            name="group"
+                            type="text"
+                    /></label>
+                    <label
+                        >Общежитие
+                        <input
+                            name="dormitory"
+                            type="number"
+                            min="1"
+                            step="1"
+                    /></label>
+                    <label
+                        >Комната
+                        <input
+                            name="rnum"
+                            type="number"
+                            min="1"
+                            step="1"
+                    /></label>
+                    <label
+                        >Срок заселения
+                        <input
+                            name="expdate"
+                            type="date"
+                    /></label>
+                    <label
+                        >Иностранец
+                        <select name="foreigner">
+                            <option value="">Все</option>
+                            <option value="true">Да</option>
+                            <option value="false">Нет</option>
+                        </select></label
+                    >
+                    <label
+                        >Заметки
+                        <input
+                            name="notes"
+                            type="text"
+                    /></label>
+                    <label
+                        >Сортировка
+                        <select name="sort">
+                            <option value="isu">ИСУ</option>
+                            <option value="fio">ФИО</option>
+                            <option value="grid">Группа</option>
+                            <option value="dnum">Общежитие</option>
+                            <option value="rnum">Комната</option>
+                            <option value="expdate">Дата</option>
+                        </select></label
+                    >
+                    <label
+                        >Порядок
+                        <select name="order">
+                            <option value="asc">По возрастанию</option>
+                            <option value="desc">По убыванию</option>
+                        </select></label
+                    >
+                    <button
+                        type="submit"
+                        class="btn"
+                    >
+                        Найти
+                    </button>
+                    <button
+                        type="reset"
+                        class="btn"
+                    >
+                        Сбросить
+                    </button>
+                </form>
+                <p
+                    id="table-status"
+                    role="status"
+                ></p>
                 <div class="table-scroll-container">
-                    <table class="table-students table-minimized student-details-table" aria-label="Досье студента">
-                        <tbody id="more-info"></tbody>
+                    <table
+                        class="table-students"
+                        id="table-students"
+                    >
+                        <thead>
+                            <tr>
+                                <th>Действия</th>
+                                <th>ФИО</th>
+                                <th>Группа</th>
+                                <th>ИСУ ID</th>
+                                <th>Номер общежития</th>
+                                <th>Комната</th>
+                            </tr>
+                        </thead>
+                        <tbody id="students-tbody"></tbody>
                     </table>
                 </div>
-                <div class="ok-container">
-                    <button type="button" class="btn btn-add" id="close"
-                        onclick="closeModal('more-info-modal')">ОК</button>
+
+                <div class="table-actions">
+                    <div class="pagination">
+                        <button
+                            type="button"
+                            class="btn"
+                            id="page-prev"
+                        >
+                            Назад
+                        </button>
+                        <span id="page-status"></span>
+                        <button
+                            type="button"
+                            class="btn"
+                            id="page-next"
+                        >
+                            Далее
+                        </button>
+                        <label
+                            >На странице
+                            <select id="page-size">
+                                <option>10</option>
+                                <option selected>20</option>
+                                <option>50</option>
+                                <option>100</option>
+                            </select></label
+                        >
+                    </div>
+                    <button
+                        type="button"
+                        class="btn btn-add"
+                        id="btn-add"
+                        onclick="openModal('form-modal')"
+                    >
+                        Добавить
+                    </button>
                 </div>
             </div>
-        </div>
+        </main>
 
-        <div class="wrapper wrapper-table" id="students-panel" hidden>
-            <form id="student-filters" class="student-filters">
-                <label>Поиск <input name="q" maxlength="150" type="search"></label>
-                <label>ИСУ <input name="isu" type="text"></label>
-                <label>ФИО <input name="fio" type="text"></label>
-                <label>Группа <input name="group" type="text"></label>
-                <label>Общежитие <input name="dormitory" type="number" min="1" step="1"></label>
-                <label>Комната <input name="rnum" type="number" min="1" step="1"></label>
-                <label>Срок заселения <input name="expdate" type="date"></label>
-                <label>Иностранец <select name="foreigner"><option value="">Все</option><option value="true">Да</option><option value="false">Нет</option></select></label>
-                <label>Заметки <input name="notes" type="text"></label>
-                <label>Сортировка <select name="sort"><option value="isu">ИСУ</option><option value="fio">ФИО</option><option value="grid">Группа</option><option value="dnum">Общежитие</option><option value="rnum">Комната</option><option value="expdate">Дата</option></select></label>
-                <label>Порядок <select name="order"><option value="asc">По возрастанию</option><option value="desc">По убыванию</option></select></label>
-                <button type="submit" class="btn">Найти</button>
-                <button type="reset" class="btn">Сбросить</button>
-            </form>
-            <p id="table-status" role="status"></p>
-            <div class="table-scroll-container">
-                <table class="table-students" id="table-students">
-                    <thead>
-                        <tr>
-                            <th>Действия</th>
-                            <th>ФИО</th>
-                            <th>Группа</th>
-                            <th>ИСУ ID</th>
-                            <th>Номер общежития</th>
-                            <th>Комната</th>
-                        </tr>
-                    </thead>
-                    <tbody id="students-tbody">
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="table-actions">
-                <div class="pagination">
-                    <button type="button" class="btn" id="page-prev">Назад</button>
-                    <span id="page-status"></span>
-                    <button type="button" class="btn" id="page-next">Далее</button>
-                    <label>На странице <select id="page-size"><option>10</option><option selected>20</option><option>50</option><option>100</option></select></label>
-                </div>
-                <button type="button" class="btn btn-add" id="btn-add"
-                    onclick="openModal('form-modal')">Добавить</button>
-            </div>
-        </div>
-
-    </main>
-
-    <script src="/static/scripts/modal.js"></script>
-    <script src="/static/scripts/validation.js"></script>
-    <script src="/static/scripts/utils.js"></script>
-    <script src="/static/scripts/auth.js"></script>
-    <script src="/static/scripts/studentStore.js"></script>
-    <script src="/static/scripts/studentTable.js"></script>
-    <script src="/static/scripts/studentDetails.js"></script>
-    <script src="/static/scripts/formHandlers.js"></script>
-    <script src="/static/scripts/tableHandlers.js"></script>
-    <script src="/static/scripts/onload.js" defer></script>
-</body>
-
+        <script src="/static/scripts/modal.js"></script>
+        <script src="/static/scripts/validation.js"></script>
+        <script src="/static/scripts/utils.js"></script>
+        <script src="/static/scripts/auth.js"></script>
+        <script src="/static/scripts/studentStore.js"></script>
+        <script src="/static/scripts/studentTable.js"></script>
+        <script src="/static/scripts/studentDetails.js"></script>
+        <script src="/static/scripts/formHandlers.js"></script>
+        <script src="/static/scripts/tableHandlers.js"></script>
+        <script
+            src="/static/scripts/onload.js"
+            defer
+        ></script>
+    </body>
 </html>

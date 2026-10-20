@@ -21,20 +21,23 @@ public class ErrorMapper implements ExceptionMapper<Throwable> {
     public Response toResponse(Throwable error) {
         for (Throwable cause = error; cause != null; cause = cause.getCause()) {
             if (cause instanceof ApiException api) return response(api.status, api.detail);
-            if (cause instanceof OptimisticLockException) return response(409, "Запись уже изменена другим запросом.");
-            if (cause instanceof SQLException sql && "23505".equals(sql.getSQLState())) return response(409, "Запись с таким уникальным значением уже существует.");
+            if (cause instanceof OptimisticLockException)
+                return response(409, "Запись уже изменена другим запросом.");
+            if (cause instanceof SQLException sql && "23505".equals(sql.getSQLState()))
+                return response(409, "Запись с таким уникальным значением уже существует.");
         }
         if (error instanceof WebApplicationException web) {
             int status = web.getResponse().getStatus();
-            String message = switch (status) {
-                case 400 -> "Некорректный запрос.";
-                case 401 -> "Требуется авторизация.";
-                case 403 -> "Недостаточно прав.";
-                case 404 -> "Ресурс не найден.";
-                case 405 -> "Метод не поддерживается.";
-                case 415 -> "Требуется Content-Type: application/json.";
-                default -> "Не удалось выполнить запрос.";
-            };
+            String message =
+                    switch (status) {
+                        case 400 -> "Некорректный запрос.";
+                        case 401 -> "Требуется авторизация.";
+                        case 403 -> "Недостаточно прав.";
+                        case 404 -> "Ресурс не найден.";
+                        case 405 -> "Метод не поддерживается.";
+                        case 415 -> "Требуется Content-Type: application/json.";
+                        default -> "Не удалось выполнить запрос.";
+                    };
             return response(status, message);
         }
         LOG.log(Level.SEVERE, "Ошибка обработки запроса", error);
@@ -46,7 +49,10 @@ public class ErrorMapper implements ExceptionMapper<Throwable> {
     }
 
     private Response response(int status, List<FieldError> detail) {
-        Response.ResponseBuilder builder = Response.status(status).type(MediaType.APPLICATION_JSON).entity(Map.of("detail", detail));
+        Response.ResponseBuilder builder =
+                Response.status(status)
+                        .type(MediaType.APPLICATION_JSON)
+                        .entity(Map.of("detail", detail));
         if (status == 401) builder.header("WWW-Authenticate", "Bearer");
         return builder.build();
     }

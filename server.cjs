@@ -20,23 +20,29 @@ const swaggerRoot = require("swagger-ui-dist").absolutePath();
 const swaggerFiles = new Set(["swagger-ui.css", "swagger-ui-bundle.js"]);
 
 function proxyApi(request, response) {
-    const proxy = http.request({
-        hostname: backendHost,
-        port: backendPort,
-        path: request.url,
-        method: request.method,
-        headers: { ...request.headers, host: `${backendHost}:${backendPort}` }
-    }, backendResponse => {
-        const headers = { ...backendResponse.headers };
-        const backendOrigin = `http://${backendHost}:${backendPort}`;
-        if (headers.location?.startsWith(`${backendOrigin}/`)) headers.location = headers.location.slice(backendOrigin.length);
-        response.writeHead(backendResponse.statusCode, headers);
-        backendResponse.pipe(response);
-    });
+    const proxy = http.request(
+        {
+            hostname: backendHost,
+            port: backendPort,
+            path: request.url,
+            method: request.method,
+            headers: { ...request.headers, host: `${backendHost}:${backendPort}` }
+        },
+        backendResponse => {
+            const headers = { ...backendResponse.headers };
+            const backendOrigin = `http://${backendHost}:${backendPort}`;
+            if (headers.location?.startsWith(`${backendOrigin}/`))
+                headers.location = headers.location.slice(backendOrigin.length);
+            response.writeHead(backendResponse.statusCode, headers);
+            backendResponse.pipe(response);
+        }
+    );
     proxy.on("error", () => {
         if (response.headersSent) return response.destroy();
         response.writeHead(502, { "Content-Type": "application/json; charset=utf-8" });
-        response.end(JSON.stringify({ detail: [{ field: null, message: "Сервер API недоступен." }] }));
+        response.end(
+            JSON.stringify({ detail: [{ field: null, message: "Сервер API недоступен." }] })
+        );
     });
     request.pipe(proxy);
 }
@@ -70,7 +76,12 @@ http.createServer((request, response) => {
     const relativePath = path.relative(__dirname, filePath);
     const root = relativePath.split(path.sep)[0];
 
-    if (!relativePath || relativePath.startsWith("..") || path.isAbsolute(relativePath) || !roots.has(root)) {
+    if (
+        !relativePath ||
+        relativePath.startsWith("..") ||
+        path.isAbsolute(relativePath) ||
+        !roots.has(root)
+    ) {
         response.writeHead(403).end();
         return;
     }
@@ -80,9 +91,11 @@ http.createServer((request, response) => {
             response.writeHead(error.code === "ENOENT" ? 404 : 500).end("Not found");
             return;
         }
-        response.writeHead(200, {
-            "Content-Type": contentTypes[path.extname(filePath)] || "application/octet-stream",
-            "Cache-Control": "no-store"
-        }).end(data);
+        response
+            .writeHead(200, {
+                "Content-Type": contentTypes[path.extname(filePath)] || "application/octet-stream",
+                "Cache-Control": "no-store"
+            })
+            .end(data);
     });
 }).listen(port, host, () => console.log(`http://${host}:${port}`));

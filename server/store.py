@@ -19,7 +19,9 @@ def _load_students():
 
 def _write_students(students):
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    file_descriptor, temporary_path = tempfile.mkstemp(dir=DB_PATH.parent, prefix=".db-", suffix=".tmp")
+    file_descriptor, temporary_path = tempfile.mkstemp(
+        dir=DB_PATH.parent, prefix=".db-", suffix=".tmp"
+    )
     try:
         with os.fdopen(file_descriptor, "w", encoding="utf-8") as db:
             json.dump(students, db, ensure_ascii=False, indent=4)

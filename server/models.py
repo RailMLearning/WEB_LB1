@@ -25,13 +25,19 @@ class StudentValidation(BaseModel):
     @field_validator("fio", mode="before", check_fields=False)
     @classmethod
     def validate_fio(cls, value):
-        message = "Введите фамилию и имя или одно слово буквами. Допустимы дефис и апостроф, максимум 150 символов."
+        message = (
+            "Введите фамилию и имя или одно слово буквами. "
+            "Допустимы дефис и апостроф, максимум 150 символов."
+        )
         if not isinstance(value, str) or not value or len(value) > 150:
             raise ValueError(message)
         for word in value.split(" "):
             if not word or not unicodedata.category(word[0]).startswith("L"):
                 raise ValueError(message)
-            if any(unicodedata.category(char)[0] not in ("L", "M") and char not in "'’-" for char in word):
+            if any(
+                unicodedata.category(char)[0] not in ("L", "M") and char not in "'’-"
+                for char in word
+            ):
                 raise ValueError(message)
         return value
 
@@ -39,7 +45,10 @@ class StudentValidation(BaseModel):
     @classmethod
     def validate_group(cls, value):
         if not isinstance(value, str) or not re.fullmatch(r"[A-Z][0-9]{4}[a-z]?", value):
-            raise ValueError("Группа должна иметь формат: заглавная латинская буква, 4 цифры и необязательная строчная буква.")
+            raise ValueError(
+                "Группа должна иметь формат: заглавная латинская буква, "
+                "4 цифры и необязательная строчная буква."
+            )
         return value
 
     @field_validator("dnum", "rnum", mode="before", check_fields=False)
@@ -58,7 +67,10 @@ class StudentValidation(BaseModel):
     @field_validator("expdate", mode="before", check_fields=False)
     @classmethod
     def validate_date(cls, value):
-        message = "Дата должна быть существующей календарной датой в диапазоне от 01.01.1900 до 31.12.9999."
+        message = (
+            "Дата должна быть существующей календарной датой "
+            "в диапазоне от 01.01.1900 до 31.12.9999."
+        )
         if not isinstance(value, str) or not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", value):
             raise ValueError(message)
         try:

@@ -25,6 +25,8 @@ public class RefreshRepository {
     }
 
     public void removeExpired() {
-        em.createQuery("delete from RefreshSession s where s.expiresAt < :now").setParameter("now", Instant.now()).executeUpdate();
+        em.createQuery("delete from RefreshSession s where s.expiresAt < :now")
+                .setParameter("now", Instant.now())
+                .executeUpdate();
     }
 }

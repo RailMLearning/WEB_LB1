@@ -16,9 +16,14 @@ class StudentApiTests(unittest.TestCase):
         store.DB_PATH = Path(self.directory.name) / "db.json"
         self.client = TestClient(app, raise_server_exceptions=False)
         self.student = {
-            "isu": "001234", "fio": "Анна", "grid": "M3301",
-            "dnum": "8", "rnum": "301", "expdate": "2027-06-30",
-            "foreigner": "false", "notes": "Проверка"
+            "isu": "001234",
+            "fio": "Анна",
+            "grid": "M3301",
+            "dnum": "8",
+            "rnum": "301",
+            "expdate": "2027-06-30",
+            "foreigner": "false",
+            "notes": "Проверка",
         }
 
     def tearDown(self):
@@ -61,23 +66,44 @@ class StudentApiTests(unittest.TestCase):
             "rnum": [-1, False, None],
             "expdate": ["2026-02-30", "1899-01-01", "2027-6-30", None],
             "foreigner": [1, "on", None],
-            "notes": ["a" * 501, False, None]
+            "notes": ["a" * 501, False, None],
         }
         for field, values in cases.items():
             for value in values:
                 with self.subTest(field=field, value=str(value)[:40]):
-                    response = self.client.post("/api/requests", json={**self.student, field: value})
+                    response = self.client.post(
+                        "/api/requests", json={**self.student, field: value}
+                    )
                     self.assert_error(response, 422, field)
         self.assert_error(self.client.post("/api/requests", json={}), 422, "isu")
-        self.assert_error(self.client.post("/api/requests", json={**self.student, "unknown": 1}), 422, "unknown")
+        self.assert_error(
+            self.client.post("/api/requests", json={**self.student, "unknown": 1}), 422, "unknown"
+        )
         self.assertEqual(self.client.get("/api/requests").json(), [])
 
     def test_body_errors_remain_400(self):
-        for method, url in [("POST", "/api/requests"), ("PATCH", "/api/requests/001234"), ("QUERY", "/api/requests")]:
+        for method, url in [
+            ("POST", "/api/requests"),
+            ("PATCH", "/api/requests/001234"),
+            ("QUERY", "/api/requests"),
+        ]:
             with self.subTest(method=method):
-                self.assert_error(self.client.request(method, url, content="{", headers={"Content-Type": "application/json"}), 400)
+                self.assert_error(
+                    self.client.request(
+                        method, url, content="{", headers={"Content-Type": "application/json"}
+                    ),
+                    400,
+                )
                 for value in [[], None, "text", 42, True]:
-                    self.assert_error(self.client.request(method, url, content=json.dumps(value), headers={"Content-Type": "application/json"}), 400)
+                    self.assert_error(
+                        self.client.request(
+                            method,
+                            url,
+                            content=json.dumps(value),
+                            headers={"Content-Type": "application/json"},
+                        ),
+                        400,
+                    )
 
     def test_patch_preserves_omitted_fields(self):
         created = self.create()
@@ -87,7 +113,9 @@ class StudentApiTests(unittest.TestCase):
         self.assertEqual(self.client.patch("/api/requests/001234", json={}).json(), response.json())
         for field in self.student:
             with self.subTest(field=field):
-                self.assert_error(self.client.patch("/api/requests/001234", json={field: None}), 422, field)
+                self.assert_error(
+                    self.client.patch("/api/requests/001234", json={field: None}), 422, field
+                )
         self.assertEqual(self.client.get("/api/requests/001234").json(), response.json())
 
     def test_duplicate_and_id_change(self):
@@ -107,10 +135,14 @@ class StudentApiTests(unittest.TestCase):
         expected = self.client.get("/api/requests", params=filters).json()
         self.assertEqual(len(expected), 1)
         self.assertEqual(expected[0]["isu"], "001234")
-        self.assertEqual(self.client.request("QUERY", "/api/requests", json=filters).json(), expected)
+        self.assertEqual(
+            self.client.request("QUERY", "/api/requests", json=filters).json(), expected
+        )
         self.assert_error(self.client.get("/api/requests?unknown=1"), 422)
         self.assert_error(self.client.get("/api/requests?group=M3301&grid=M3302"), 422)
-        self.assert_error(self.client.request("QUERY", "/api/requests", json={"rnum": None}), 422, "rnum")
+        self.assert_error(
+            self.client.request("QUERY", "/api/requests", json={"rnum": None}), 422, "rnum"
+        )
 
     def test_delete_and_missing_student(self):
         self.create()
@@ -129,7 +161,9 @@ class StudentApiTests(unittest.TestCase):
         self.assertIn("StudentCreate", schema["components"]["schemas"])
         self.assertIn("StudentUpdate", schema["components"]["schemas"])
         self.assertEqual(schema["components"]["schemas"]["StudentUpdate"].get("required", []), [])
-        self.assertEqual(schema["components"]["schemas"]["StudentCreate"]["additionalProperties"], False)
+        self.assertEqual(
+            schema["components"]["schemas"]["StudentCreate"]["additionalProperties"], False
+        )
 
 
 if __name__ == "__main__":
