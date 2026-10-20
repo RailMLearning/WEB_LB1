@@ -1,15 +1,15 @@
 {
-  "private": true,
-  "dependencies": {
-    "swagger-ui-dist": "5.17.14"
-  },
-  "scripts": {
-    "start": "node server.cjs",
-    "test": "npm run test:api",
-    "test:api": "python tools/check-lab3.py",
-    "test:ui": "node tools/check-lab3-ui.cjs"
-  },
-  "devDependencies": {
-    "playwright": "1.58.2"
-  }
+    "private": true,
+    "dependencies": {
+        "swagger-ui-dist": "5.17.14"
+    },
+    "scripts": {
+        "start": "node server.cjs",
+        "test": "npm run test:api",
+        "test:api": "python tools/check-lab3.py",
+        "test:ui": "node tools/check-lab3-ui.cjs"
+    },
+    "devDependencies": {
+        "playwright": "1.58.2"
+    }
 }

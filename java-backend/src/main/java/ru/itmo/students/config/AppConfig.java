@@ -20,7 +20,8 @@ public class AppConfig {
 
     public AppConfig(Map<String, String> values) {
         jwtSecret = values.getOrDefault("JWT_SECRET", "");
-        if (jwtSecret.getBytes(StandardCharsets.UTF_8).length < 32) throw new IllegalStateException("JWT_SECRET должен содержать минимум 32 байта.");
+        if (jwtSecret.getBytes(StandardCharsets.UTF_8).length < 32)
+            throw new IllegalStateException("JWT_SECRET должен содержать минимум 32 байта.");
         issuer = values.getOrDefault("JWT_ISSUER", "students-lab");
         accessSeconds = positive(values, "ACCESS_TOKEN_SECONDS", 900);
         refreshSeconds = positive(values, "REFRESH_TOKEN_SECONDS", 604800);
@@ -29,17 +30,42 @@ public class AppConfig {
         adminPassword = values.getOrDefault("ADMIN_PASSWORD", "");
     }
 
+    public String jwtSecret() {
+        return jwtSecret;
+    }
 
-    public String jwtSecret() { return jwtSecret; }
-    public String issuer() { return issuer; }
-    public int accessSeconds() { return accessSeconds; }
-    public int refreshSeconds() { return refreshSeconds; }
-    public String adminUsername() { return adminUsername; }
-    public String adminEmail() { return adminEmail; }
-    public String adminPassword() { return adminPassword; }
+    public String issuer() {
+        return issuer;
+    }
+
+    public int accessSeconds() {
+        return accessSeconds;
+    }
+
+    public int refreshSeconds() {
+        return refreshSeconds;
+    }
+
+    public String adminUsername() {
+        return adminUsername;
+    }
+
+    public String adminEmail() {
+        return adminEmail;
+    }
+
+    public String adminPassword() {
+        return adminPassword;
+    }
 
     private int positive(Map<String, String> values, String name, int fallback) {
-        int value = Integer.parseInt(values.getOrDefault(name, String.valueOf(fallback)));
+        String raw = values.getOrDefault(name, String.valueOf(fallback)).strip();
+        final int value;
+        try {
+            value = Integer.parseInt(raw);
+        } catch (NumberFormatException error) {
+            throw new IllegalStateException(name + " должен быть положительным целым числом.", error);
+        }
         if (value < 1) throw new IllegalStateException(name + " должен быть положительным.");
         return value;
     }

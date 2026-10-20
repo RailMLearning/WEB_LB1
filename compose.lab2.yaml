@@ -1,19 +1,19 @@
 services:
-  web:
-    build:
-      context: .
-      dockerfile: Dockerfile.lab2
-    ports:
-      - "8000:8000"
-    volumes:
-      - students:/data
-  frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile.frontend
-    ports:
-      - "8080:8080"
-    depends_on:
-      - web
+    web:
+        build:
+            context: .
+            dockerfile: Dockerfile.lab2
+        ports:
+            - "8000:8000"
+        volumes:
+            - students:/data
+    frontend:
+        build:
+            context: .
+            dockerfile: Dockerfile.frontend
+        ports:
+            - "8080:8080"
+        depends_on:
+            - web
 volumes:
-  students:
+    students:

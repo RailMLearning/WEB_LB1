@@ -25,4 +25,7 @@ $taskLines = @(
     'FRONTEND_PORT=8080'
 )
 [System.IO.File]::WriteAllLines($taskEnv, $taskLines, [System.Text.UTF8Encoding]::new($false))
-Write-Output '.env created. Administrator login and password are in ADMIN_USERNAME and ADMIN_PASSWORD.'
+Write-Output (
+    '.env created. Administrator login and password are in ' +
+    'ADMIN_USERNAME and ADMIN_PASSWORD.'
+)

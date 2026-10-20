@@ -24,7 +24,9 @@ async function readStudentResponse(response) {
 async function getAllStudents(filters = {}) {
     const entries = Object.entries(filters).filter(([, value]) => value !== "");
     let response;
-    const filterCount = entries.filter(([field]) => !["page", "size", "sort", "order"].includes(field)).length;
+    const filterCount = entries.filter(
+        ([field]) => !["page", "size", "sort", "order"].includes(field)
+    ).length;
     if (filterCount > 3) {
         response = await authorizedFetch("/api/requests", {
             method: "QUERY",
@@ -59,6 +61,8 @@ async function saveStudent(student, originalIsu = null) {
 }
 
 async function deleteStudentById(isu) {
-    const response = await authorizedFetch(`/api/requests/${encodeURIComponent(isu)}`, { method: "DELETE" });
+    const response = await authorizedFetch(`/api/requests/${encodeURIComponent(isu)}`, {
+        method: "DELETE"
+    });
     return readStudentResponse(response);
 }

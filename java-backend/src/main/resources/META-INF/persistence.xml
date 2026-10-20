@@ -1,14 +1,29 @@
-<persistence xmlns="https://jakarta.ee/xml/ns/persistence" version="3.0">
-  <persistence-unit name="students" transaction-type="JTA">
-    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-    <jta-data-source>java:jboss/datasources/StudentsDS</jta-data-source>
-    <class>ru.itmo.students.model.Student</class>
-    <class>ru.itmo.students.model.UserAccount</class>
-    <class>ru.itmo.students.model.RefreshSession</class>
-    <properties>
-      <property name="hibernate.hbm2ddl.auto" value="validate"/>
-      <property name="hibernate.show_sql" value="false"/>
-      <property name="hibernate.jdbc.time_zone" value="UTC"/>
-    </properties>
-  </persistence-unit>
+<persistence
+    xmlns="https://jakarta.ee/xml/ns/persistence"
+    version="3.0"
+>
+    <persistence-unit
+        name="students"
+        transaction-type="JTA"
+    >
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <jta-data-source>java:jboss/datasources/StudentsDS</jta-data-source>
+        <class>ru.itmo.students.model.Student</class>
+        <class>ru.itmo.students.model.UserAccount</class>
+        <class>ru.itmo.students.model.RefreshSession</class>
+        <properties>
+            <property
+                name="hibernate.hbm2ddl.auto"
+                value="validate"
+            />
+            <property
+                name="hibernate.show_sql"
+                value="false"
+            />
+            <property
+                name="hibernate.jdbc.time_zone"
+                value="UTC"
+            />
+        </properties>
+    </persistence-unit>
 </persistence>

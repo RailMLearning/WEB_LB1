@@ -66,4 +66,4 @@ services:
       web:
         condition: service_healthy
 volumes:
-  lab3-postgres:
+    lab3-postgres:

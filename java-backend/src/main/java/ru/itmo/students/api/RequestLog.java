@@ -15,9 +15,18 @@ public class RequestLog implements ContainerRequestFilter, ContainerResponseFilt
     }
 
     public void filter(ContainerRequestContext request, ContainerResponseContext response) {
-        long started = request.getProperty("started") instanceof Long value ? value : System.nanoTime();
+        long started =
+                request.getProperty("started") instanceof Long value ? value : System.nanoTime();
         String path = request.getUriInfo().getPath().replaceFirst("^/", "");
-        LOG.info(request.getMethod() + " /api/" + path + " " + response.getStatus() + " " + (System.nanoTime() - started) / 1000000 + "ms");
+        LOG.info(
+                request.getMethod()
+                        + " /api/"
+                        + path
+                        + " "
+                        + response.getStatus()
+                        + " "
+                        + (System.nanoTime() - started) / 1000000
+                        + "ms");
         if (path.startsWith("auth")) response.getHeaders().putSingle("Cache-Control", "no-store");
     }
 }
