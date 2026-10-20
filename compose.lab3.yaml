@@ -7,6 +7,8 @@ services:
       FLYWAY_USER: ${DB_USER:-students}
       FLYWAY_PASSWORD: ${DB_PASSWORD:?Run tools/setup-env.ps1}
       FLYWAY_LOCATIONS: filesystem:/flyway/sql
+      FLYWAY_BASELINE_ON_MIGRATE: "true"
+      FLYWAY_BASELINE_VERSION: "1"
     volumes:
       - ./java-backend/docker/migrations:/flyway/sql:ro
     depends_on:
