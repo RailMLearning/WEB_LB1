@@ -1,15 +1,29 @@
 {
     "private": true,
+    "type": "module",
     "dependencies": {
-        "swagger-ui-dist": "5.17.14"
+        "pinia": "3.0.4",
+        "rxjs": "7.8.2",
+        "swagger-ui-dist": "5.17.14",
+        "vue": "3.5.45",
+        "vue-router": "4.6.4"
     },
     "scripts": {
-        "start": "node server.cjs",
-        "test": "npm run test:api",
+        "start": "vite --host 0.0.0.0",
+        "dev": "vite --host 0.0.0.0",
+        "build": "vite build",
+        "preview": "vite preview --host 0.0.0.0",
+        "setup": "node tools/setup-env.mjs",
+        "start:lab3": "node server.cjs",
+        "test": "npm run test:unit",
+        "test:unit": "node --test tests/frontend/*.test.js",
         "test:api": "python tools/check-lab3.py",
-        "test:ui": "node tools/check-lab3-ui.cjs"
+        "test:ui": "node tools/check-lab4-ui.cjs",
+        "test:ui:lab3": "node tools/check-lab3-ui.cjs"
     },
     "devDependencies": {
-        "playwright": "1.58.2"
+        "@vitejs/plugin-vue": "6.0.10",
+        "playwright": "1.58.2",
+        "vite": "7.3.8"
     }
 }

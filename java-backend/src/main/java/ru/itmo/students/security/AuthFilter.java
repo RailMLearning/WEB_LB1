@@ -17,12 +17,8 @@ import ru.itmo.students.service.AuthService;
 @Priority(Priorities.AUTHENTICATION)
 public class AuthFilter implements ContainerRequestFilter {
     @Context ResourceInfo resource;
-    private final AuthService auth;
-
     @Inject
-    public ContainerRequestFilter(AuthService auth){
-        this.auth = auth;
-    }
+    private AuthService auth;
     
     @Override
     public void filter(ContainerRequestContext request) {

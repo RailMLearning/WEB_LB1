@@ -12,3 +12,6 @@ ONLY_FOR_AI
 java-backend/target
 Presentation
 blobs
+dist
+test-results
+playwright-report

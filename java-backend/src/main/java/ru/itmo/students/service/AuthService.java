@@ -1,7 +1,7 @@
 package ru.itmo.students.service;
 
 import io.jsonwebtoken.Claims;
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import java.time.Instant;
@@ -14,7 +14,7 @@ import ru.itmo.students.repository.*;
 import ru.itmo.students.security.*;
 import ru.itmo.students.validation.InputValidator;
 
-@ApplicationScoped
+@Dependent
 @Transactional
 public class AuthService {
     private final UserRepository users;

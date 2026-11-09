@@ -2,7 +2,7 @@ package ru.itmo.students.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -13,7 +13,7 @@ import ru.itmo.students.api.ApiException;
 import ru.itmo.students.config.AppConfig;
 import ru.itmo.students.model.UserAccount;
 
-@ApplicationScoped
+@Dependent
 public class JwtService {
     private final AppConfig config;
 

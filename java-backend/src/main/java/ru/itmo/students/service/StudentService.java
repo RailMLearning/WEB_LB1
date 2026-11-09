@@ -1,6 +1,6 @@
 package ru.itmo.students.service;
 
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
 import jakarta.transaction.Transactional;
@@ -11,11 +11,17 @@ import ru.itmo.students.model.Student;
 import ru.itmo.students.repository.StudentRepository;
 import ru.itmo.students.validation.InputValidator;
 
-@ApplicationScoped
+@Dependent
 @Transactional
 public class StudentService {
-    @Inject StudentRepository repository;
-    @Inject InputValidator validator;
+    private final StudentRepository repository;
+    private final InputValidator validator;
+
+    @Inject 
+    public StudentService(StudentRepository repository, InputValidator validator) {
+        this.repository = repository;
+        this.validator = validator;
+    }
 
     public record Page(List<StudentDto> students, long total) {}
 

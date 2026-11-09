@@ -3,7 +3,7 @@ package ru.itmo.students.api;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
 import ru.itmo.students.dto.*;
@@ -14,14 +14,11 @@ import ru.itmo.students.validation.InputValidator;
 @RequestScoped
 @Produces(MediaType.APPLICATION_JSON)
 public class AuthResource {
-    private final AuthService service;
-    private final InputValidator validator;
+    @Inject
+    private AuthService service;
 
     @Inject
-    public AuthResource(AuthService service, InputValidator validator){
-        this.service = service;
-        this.validator = validator;
-    }
+    private InputValidator validator;
 
     @POST
     @Path("/register")
@@ -57,7 +54,7 @@ public class AuthResource {
     @GET
     @Path("/me")
     @RolesAllowed({"ADMIN", "USER"})
-    public UserDto me(@Context ContainerRequestContext request) {
-        return (UserDto) request.getProperty("user");
+    public UserDto me(@Context HttpServletRequest request) {
+        return (UserDto) request.getAttribute("user");
     }
 }

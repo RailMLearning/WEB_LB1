@@ -67,5 +67,10 @@ services:
     depends_on:
       web:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:8080/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 volumes:
     lab3-postgres:
