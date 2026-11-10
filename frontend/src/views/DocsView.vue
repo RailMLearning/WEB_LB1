@@ -9,7 +9,9 @@ const container = ref(null);
 const loading = ref(true);
 const error = ref("");
 let active = true;
-onUnmounted(() => { active = false; });
+onUnmounted(() => {
+    active = false;
+});
 onMounted(async () => {
     try {
         const { default: SwaggerUI } = await import("swagger-ui-dist/swagger-ui-es-bundle.js");
@@ -24,8 +26,18 @@ onMounted(async () => {
 </script>
 
 <template>
-    <PageHeading title="Документация API" description="Запросы к серверу и форматы ответов." />
+    <PageHeading
+        title="Документация API"
+        description="Запросы к серверу и форматы ответов."
+    />
     <LoadingState v-if="loading" />
-    <AppNotice v-if="error" kind="error">{{ error }}</AppNotice>
-    <div ref="container" class="swagger-container"></div>
+    <AppNotice
+        v-if="error"
+        kind="error"
+        >{{ error }}</AppNotice
+    >
+    <div
+        ref="container"
+        class="swagger-container"
+    ></div>
 </template>

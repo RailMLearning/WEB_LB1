@@ -35,16 +35,32 @@ async function submit(data) {
 </script>
 
 <template>
-    <main id="main-content" class="auth-page">
+    <main
+        id="main-content"
+        class="auth-page"
+    >
         <section class="auth-intro">
-            <RouterLink to="/" class="brand">
+            <RouterLink
+                to="/"
+                class="brand"
+            >
                 <span class="brand-mark"><AppIcon name="building" /></span>
                 <span>Общежитие</span>
             </RouterLink>
             <div class="auth-intro-copy">
-                <div class="building-drawing" aria-hidden="true">
-                    <div v-for="floor in 5" :key="floor" class="drawing-floor">
-                        <i v-for="room in 5" :key="room"></i>
+                <div
+                    class="building-drawing"
+                    aria-hidden="true"
+                >
+                    <div
+                        v-for="floor in 5"
+                        :key="floor"
+                        class="drawing-floor"
+                    >
+                        <i
+                            v-for="room in 5"
+                            :key="room"
+                        ></i>
                     </div>
                 </div>
                 <h2>У каждого студента<br />своё место.</h2>
@@ -56,17 +72,34 @@ async function submit(data) {
             <p class="small-label">Личный кабинет</p>
             <h1>{{ registering ? "Регистрация" : "С возвращением" }}</h1>
             <p class="muted">
-                {{ registering ? "Заполните данные для создания аккаунта." : "Войдите, чтобы открыть список студентов." }}
+                {{
+                    registering
+                        ? "Заполните данные для создания аккаунта."
+                        : "Войдите, чтобы открыть список студентов."
+                }}
             </p>
             <AppNotice v-if="auth.notice">{{ auth.notice }}</AppNotice>
-            <AppNotice v-if="message" kind="error">{{ message }}</AppNotice>
-            <AuthForm :registering="registering" :busy="busy" :server-errors="errors"
-                @submit="submit" @clear-error="field => delete errors[field]" />
+            <AppNotice
+                v-if="message"
+                kind="error"
+                >{{ message }}</AppNotice
+            >
+            <AuthForm
+                :registering="registering"
+                :busy="busy"
+                :server-errors="errors"
+                @submit="submit"
+                @clear-error="field => delete errors[field]"
+            />
             <p class="auth-switch">
                 {{ registering ? "Уже есть аккаунт?" : "Нет аккаунта?" }}
-                <RouterLink :to="{
-                    path: registering ? '/login' : '/register', query: route.query
-                }">{{ registering ? "Войти" : "Зарегистрироваться" }}</RouterLink>
+                <RouterLink
+                    :to="{
+                        path: registering ? '/login' : '/register',
+                        query: route.query
+                    }"
+                    >{{ registering ? "Войти" : "Зарегистрироваться" }}</RouterLink
+                >
             </p>
         </section>
     </main>

@@ -21,54 +21,123 @@ function submit() {
     Object.keys(errors).forEach(key => delete errors[key]);
     Object.assign(errors, validateStudent(form));
     if (Object.keys(errors).length) return;
-    const data = Object.fromEntries(Object.entries(form).map(([name, value]) => [
-        name, typeof value === "string" ? value.trim() : value
-    ]));
+    const data = Object.fromEntries(
+        Object.entries(form).map(([name, value]) => [
+            name,
+            typeof value === "string" ? value.trim() : value
+        ])
+    );
     emit("submit", data);
 }
 </script>
 
 <template>
-    <form class="student-form" novalidate :aria-busy="busy" @submit.prevent="submit">
-        <fieldset :disabled="busy" class="form-grid">
+    <form
+        class="student-form"
+        novalidate
+        :aria-busy="busy"
+        @submit.prevent="submit"
+    >
+        <fieldset
+            :disabled="busy"
+            class="form-grid"
+        >
             <legend class="sr-only">Данные студента</legend>
-            <div v-for="field in fields" :key="field.name" :class="['field', { 'field-wide': field.wide }]">
-                <label :for="`student-${field.name}`">{{ field.label }} <span aria-hidden="true">*</span></label>
-                <input :id="`student-${field.name}`" :name="field.name" :type="field.type"
-                    v-model="form[field.name]" :maxlength="field.type === 'text' ? field.max : undefined"
-                    :min="field.min" :max="field.type === 'date' ? field.max : undefined"
-                    :step="field.type === 'number' ? 1 : undefined" required
+            <div
+                v-for="field in fields"
+                :key="field.name"
+                :class="['field', { 'field-wide': field.wide }]"
+            >
+                <label :for="`student-${field.name}`"
+                    >{{ field.label }} <span aria-hidden="true">*</span></label
+                >
+                <input
+                    :id="`student-${field.name}`"
+                    :name="field.name"
+                    :type="field.type"
+                    v-model="form[field.name]"
+                    :maxlength="field.type === 'text' ? field.max : undefined"
+                    :min="field.min"
+                    :max="field.type === 'date' ? field.max : undefined"
+                    :step="field.type === 'number' ? 1 : undefined"
+                    required
                     :aria-invalid="Boolean(errors[field.name] || serverErrors?.[field.name])"
                     :aria-describedby="`student-${field.name}-help`"
-                    @input="delete errors[field.name]; emit('clear-error', field.name)" />
-                <span :id="`student-${field.name}-help`"
-                    :class="errors[field.name] || serverErrors?.[field.name] ? 'field-error' : 'form-hint'">
+                    @input="
+                        delete errors[field.name];
+                        emit('clear-error', field.name);
+                    "
+                />
+                <span
+                    :id="`student-${field.name}-help`"
+                    :class="
+                        errors[field.name] || serverErrors?.[field.name]
+                            ? 'field-error'
+                            : 'form-hint'
+                    "
+                >
                     {{ errors[field.name] || serverErrors?.[field.name] || field.hint }}
                 </span>
             </div>
             <div class="field field-wide">
-                <label class="checkbox-field" for="student-foreigner">
-                    <input id="student-foreigner" name="foreigner" type="checkbox" v-model="form.foreigner" />
+                <label
+                    class="checkbox-field"
+                    for="student-foreigner"
+                >
+                    <input
+                        id="student-foreigner"
+                        name="foreigner"
+                        type="checkbox"
+                        v-model="form.foreigner"
+                    />
                     Иностранный студент
                 </label>
             </div>
             <div class="field field-wide">
-                <label for="student-notes">Заметки <span class="optional">Необязательно</span></label>
-                <textarea id="student-notes" name="notes" rows="4" maxlength="500" v-model="form.notes"
+                <label for="student-notes"
+                    >Заметки <span class="optional">Необязательно</span></label
+                >
+                <textarea
+                    id="student-notes"
+                    name="notes"
+                    rows="4"
+                    maxlength="500"
+                    v-model="form.notes"
                     :aria-invalid="Boolean(errors.notes || serverErrors?.notes)"
                     aria-describedby="student-notes-help"
-                    @input="delete errors.notes; emit('clear-error', 'notes')"></textarea>
-                <span id="student-notes-help" :class="errors.notes || serverErrors?.notes ? 'field-error' : 'form-hint'">
-                    {{ errors.notes || serverErrors?.notes || `${form.notes.length} / 500 символов` }}
+                    @input="
+                        delete errors.notes;
+                        emit('clear-error', 'notes');
+                    "
+                ></textarea>
+                <span
+                    id="student-notes-help"
+                    :class="errors.notes || serverErrors?.notes ? 'field-error' : 'form-hint'"
+                >
+                    {{
+                        errors.notes || serverErrors?.notes || `${form.notes.length} / 500 символов`
+                    }}
                 </span>
             </div>
             <div class="form-actions field-wide">
-                <button class="button button-primary" type="submit">
-                    <span v-if="busy" class="spinner" aria-hidden="true"></span>
+                <button
+                    class="button button-primary"
+                    type="submit"
+                >
+                    <span
+                        v-if="busy"
+                        class="spinner"
+                        aria-hidden="true"
+                    ></span>
                     {{ busy ? "Сохраняем…" : "Сохранить" }}
                 </button>
-                <RouterLink class="button button-secondary" :class="{ 'disabled-link': busy }"
-                    :aria-disabled="busy" to="/students">Отмена</RouterLink>
+                <RouterLink
+                    class="button button-secondary"
+                    :class="{ 'disabled-link': busy }"
+                    :aria-disabled="busy"
+                    to="/students"
+                    >Отмена</RouterLink
+                >
             </div>
         </fieldset>
     </form>

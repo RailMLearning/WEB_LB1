@@ -16,13 +16,23 @@ const loading = ref(true);
 const error = ref(null);
 const controller = new AbortController();
 let active = true;
-onUnmounted(() => { active = false; controller.abort(); });
-const fields = computed(() => student.value ? [
-    ["Номер ИСУ", student.value.isu], ["ФИО", student.value.fio],
-    ["Группа", student.value.grid], ["Общежитие", student.value.dnum],
-    ["Комната", student.value.rnum], ["Дата заселения", formatDate(student.value.expdate)],
-    ["Иностранец", student.value.foreigner ? "Да" : "Нет"]
-] : []);
+onUnmounted(() => {
+    active = false;
+    controller.abort();
+});
+const fields = computed(() =>
+    student.value
+        ? [
+              ["Номер ИСУ", student.value.isu],
+              ["ФИО", student.value.fio],
+              ["Группа", student.value.grid],
+              ["Общежитие", student.value.dnum],
+              ["Комната", student.value.rnum],
+              ["Дата заселения", formatDate(student.value.expdate)],
+              ["Иностранец", student.value.foreigner ? "Да" : "Нет"]
+          ]
+        : []
+);
 
 async function load() {
     loading.value = true;
@@ -40,21 +50,58 @@ onMounted(load);
 </script>
 
 <template>
-    <RouterLink to="/students" class="back-link"><AppIcon name="back" /> К списку студентов</RouterLink>
-    <PageHeading :title="student?.fio || 'Карточка студента'" :description="`ИСУ ${isu}`">
-        <RouterLink v-if="student && auth.isAdmin" :to="`/students/${student.isu}/edit`"
-            class="button button-primary"><AppIcon name="edit" /> Изменить</RouterLink>
+    <RouterLink
+        to="/students"
+        class="back-link"
+        ><AppIcon name="back" /> К списку студентов</RouterLink
+    >
+    <PageHeading
+        :title="student?.fio || 'Карточка студента'"
+        :description="`ИСУ ${isu}`"
+    >
+        <RouterLink
+            v-if="student && auth.isAdmin"
+            :to="`/students/${student.isu}/edit`"
+            class="button button-primary"
+            ><AppIcon name="edit" /> Изменить</RouterLink
+        >
     </PageHeading>
-    <LoadingState v-if="loading" label="Загружаем карточку…" />
-    <section v-else-if="error" class="content-panel">
-        <AppNotice kind="error">{{ error.status === 404 ? 'Студент с таким ИСУ не найден.' : error.message }}</AppNotice>
-        <button v-if="error.status !== 404" class="button button-secondary" @click="load">Повторить запрос</button>
+    <LoadingState
+        v-if="loading"
+        label="Загружаем карточку…"
+    />
+    <section
+        v-else-if="error"
+        class="content-panel"
+    >
+        <AppNotice kind="error">{{
+            error.status === 404 ? "Студент с таким ИСУ не найден." : error.message
+        }}</AppNotice>
+        <button
+            v-if="error.status !== 404"
+            class="button button-secondary"
+            @click="load"
+        >
+            Повторить запрос
+        </button>
     </section>
-    <section v-else-if="student" class="content-panel details-panel">
+    <section
+        v-else-if="student"
+        class="content-panel details-panel"
+    >
         <h2>Информация о студенте</h2>
         <dl class="details-grid">
-            <div v-for="[label, value] in fields" :key="label"><dt>{{ label }}</dt><dd>{{ value }}</dd></div>
+            <div
+                v-for="[label, value] in fields"
+                :key="label"
+            >
+                <dt>{{ label }}</dt>
+                <dd>{{ value }}</dd>
+            </div>
         </dl>
-        <div class="notes-block"><h3>Заметки</h3><p>{{ student.notes || "Нет заметок." }}</p></div>
+        <div class="notes-block">
+            <h3>Заметки</h3>
+            <p>{{ student.notes || "Нет заметок." }}</p>
+        </div>
     </section>
 </template>

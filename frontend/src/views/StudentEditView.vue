@@ -20,7 +20,10 @@ const saveError = ref("");
 const errors = ref({});
 const controller = new AbortController();
 let active = true;
-onUnmounted(() => { active = false; controller.abort(); });
+onUnmounted(() => {
+    active = false;
+    controller.abort();
+});
 
 async function load() {
     if (!editing.value) return;
@@ -57,19 +60,47 @@ async function save(data) {
 </script>
 
 <template>
-    <RouterLink to="/students" class="back-link"><AppIcon name="back" /> К списку студентов</RouterLink>
-    <PageHeading :title="editing ? 'Редактирование студента' : 'Новый студент'"
-        description="Поля со звёздочкой обязательны для заполнения." />
-    <LoadingState v-if="loading" label="Загружаем данные студента…" />
-    <section v-else-if="loadError" class="content-panel">
+    <RouterLink
+        to="/students"
+        class="back-link"
+        ><AppIcon name="back" /> К списку студентов</RouterLink
+    >
+    <PageHeading
+        :title="editing ? 'Редактирование студента' : 'Новый студент'"
+        description="Поля со звёздочкой обязательны для заполнения."
+    />
+    <LoadingState
+        v-if="loading"
+        label="Загружаем данные студента…"
+    />
+    <section
+        v-else-if="loadError"
+        class="content-panel"
+    >
         <AppNotice kind="error">{{ loadError.message }}</AppNotice>
-        <button v-if="loadError.status !== 404" class="button button-secondary" @click="load">
+        <button
+            v-if="loadError.status !== 404"
+            class="button button-secondary"
+            @click="load"
+        >
             Повторить запрос
         </button>
     </section>
-    <section v-else class="content-panel form-panel">
-        <AppNotice v-if="saveError" kind="error">{{ saveError }}</AppNotice>
-        <StudentForm :initial="initial" :busy="busy" :server-errors="errors" @submit="save"
-            @clear-error="field => delete errors[field]" />
+    <section
+        v-else
+        class="content-panel form-panel"
+    >
+        <AppNotice
+            v-if="saveError"
+            kind="error"
+            >{{ saveError }}</AppNotice
+        >
+        <StudentForm
+            :initial="initial"
+            :busy="busy"
+            :server-errors="errors"
+            @submit="save"
+            @clear-error="field => delete errors[field]"
+        />
     </section>
 </template>

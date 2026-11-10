@@ -5,6 +5,7 @@ import secrets
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
@@ -111,10 +112,11 @@ def main():
         check("USER cannot create", request("POST", "/api/requests", fixture, user_token)[0], 403)
         created = request("POST", "/api/requests", fixture, admin_token)
         check("ADMIN create", created[0], 201)
+        location = next(v for k, v in created[2].items() if k.lower() == "location")
         check(
             "public Location through proxy",
-            next(v for k, v in created[2].items() if k.lower() == "location"),
-            "/api/requests/" + first,
+            urllib.parse.urljoin(BASE + "/", location),
+            BASE + "/api/requests/" + first,
         )
         check("normalized name", created[1]["fio"], "Анна-Мария")
         check("number normalization", created[1]["dnum"], 8)

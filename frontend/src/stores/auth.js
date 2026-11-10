@@ -95,7 +95,8 @@ export const useAuthStore = defineStore("auth", () => {
         if (!refreshToken) return;
         try {
             await client.publicRequest("/auth/logout", {
-                method: "POST", json: { refreshToken }
+                method: "POST",
+                json: { refreshToken }
             });
         } catch {
             notice.value = "Вы вышли на этом устройстве. Сервер не подтвердил отзыв сеанса.";
@@ -103,7 +104,17 @@ export const useAuthStore = defineStore("auth", () => {
     }
 
     return {
-        user, notice, initializationError, initialized, isAuthenticated, isAdmin,
-        initialize, loadProfile, login, register, logout, request: client.request
+        user,
+        notice,
+        initializationError,
+        initialized,
+        isAuthenticated,
+        isAdmin,
+        initialize,
+        loadProfile,
+        login,
+        register,
+        logout,
+        request: client.request
     };
 });

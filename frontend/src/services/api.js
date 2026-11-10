@@ -41,7 +41,9 @@ async function fetchJson(path, options = {}) {
                 409: "Запись с такими данными уже существует.",
                 422: "Проверьте заполненные поля."
             };
-            const message = messages.join(" ") || fallback[response.status] ||
+            const message =
+                messages.join(" ") ||
+                fallback[response.status] ||
                 "Ошибка сервера. Повторите запрос позже.";
             throw new ApiError(response.status, message, details);
         }
@@ -74,17 +76,20 @@ export function createApiClient({ getSession, updateTokens, expireSession }) {
             const pending = fetchJson("/auth/refresh", {
                 method: "POST",
                 json: { refreshToken }
-            }).then(result => {
-                checkSession(version);
-                updateTokens(result.data);
-            }).catch(error => {
-                if (getSession().version === version && error.status === 401) {
-                    expireSession();
-                }
-                throw error;
-            }).finally(() => {
-                if (refreshing === pending) refreshing = null;
-            });
+            })
+                .then(result => {
+                    checkSession(version);
+                    updateTokens(result.data);
+                })
+                .catch(error => {
+                    if (getSession().version === version && error.status === 401) {
+                        expireSession();
+                    }
+                    throw error;
+                })
+                .finally(() => {
+                    if (refreshing === pending) refreshing = null;
+                });
             pending.version = version;
             refreshing = pending;
         }

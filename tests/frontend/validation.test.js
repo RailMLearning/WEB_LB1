@@ -1,12 +1,21 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { emptyStudent, validateAuth, validateStudent } from "../../frontend/src/services/validation.js";
+import {
+    emptyStudent,
+    validateAuth,
+    validateStudent
+} from "../../frontend/src/services/validation.js";
 import { safeRedirect } from "../../frontend/src/router.js";
 
 function student() {
     return {
-        ...emptyStudent(), isu: "001234", fio: "Анна", grid: "M3301",
-        dnum: "8", rnum: "42", expdate: "2026-10-20"
+        ...emptyStudent(),
+        isu: "001234",
+        fio: "Анна",
+        grid: "M3301",
+        dnum: "8",
+        rnum: "42",
+        expdate: "2026-10-20"
     };
 }
 
@@ -19,8 +28,12 @@ test("one-word names, leading-zero IDs and false are valid", () => {
 
 test("invalid dates, numeric names and unsafe room numbers are rejected", () => {
     const errors = validateStudent({
-        ...student(), fio: "Анна2", expdate: "2026-02-30", dnum: "0",
-        rnum: "9007199254740992", grid: "m3301"
+        ...student(),
+        fio: "Анна2",
+        expdate: "2026-02-30",
+        dnum: "0",
+        rnum: "9007199254740992",
+        grid: "m3301"
     });
     assert.deepEqual(Object.keys(errors).sort(), ["dnum", "expdate", "fio", "grid", "rnum"]);
 });

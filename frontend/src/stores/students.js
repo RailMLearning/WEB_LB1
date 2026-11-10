@@ -5,9 +5,19 @@ import { createStudentSearch } from "../services/studentSearch.js";
 
 export function defaultQuery() {
     return {
-        q: "", isu: "", fio: "", grid: "", dnum: "", rnum: "",
-        expdate: "", foreigner: "", notes: "",
-        sort: "isu", order: "asc", page: 0, size: 20
+        q: "",
+        isu: "",
+        fio: "",
+        grid: "",
+        dnum: "",
+        rnum: "",
+        expdate: "",
+        foreigner: "",
+        notes: "",
+        sort: "isu",
+        order: "asc",
+        page: 0,
+        size: 20
     };
 }
 
@@ -53,5 +63,15 @@ export const useStudentsStore = defineStore("students", () => {
         if (unchanged) search.reload();
     }
 
-    return { query, items, total, loading, error, connect, setFilters, reset, reload: search.reload };
+    return {
+        query,
+        items,
+        total,
+        loading,
+        error,
+        connect,
+        setFilters,
+        reset,
+        reload: search.reload
+    };
 });

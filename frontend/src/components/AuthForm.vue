@@ -9,10 +9,22 @@ const errors = reactive({});
 const fields = computed(() => [
     { name: "username", label: "Логин", type: "text", autocomplete: "username", max: 40 },
     ...(props.registering
-        ? [{ name: "email", label: "Электронная почта", type: "email", autocomplete: "email", max: 254 }]
+        ? [
+              {
+                  name: "email",
+                  label: "Электронная почта",
+                  type: "email",
+                  autocomplete: "email",
+                  max: 254
+              }
+          ]
         : []),
-    { name: "password", label: "Пароль", type: "password",
-        autocomplete: props.registering ? "new-password" : "current-password" }
+    {
+        name: "password",
+        label: "Пароль",
+        type: "password",
+        autocomplete: props.registering ? "new-password" : "current-password"
+    }
 ]);
 
 function submit() {
@@ -27,25 +39,56 @@ function submit() {
 </script>
 
 <template>
-    <form class="auth-form" novalidate @submit.prevent="submit" :aria-busy="busy">
+    <form
+        class="auth-form"
+        novalidate
+        @submit.prevent="submit"
+        :aria-busy="busy"
+    >
         <fieldset :disabled="busy">
-            <div v-for="field in fields" :key="field.name" class="field">
+            <div
+                v-for="field in fields"
+                :key="field.name"
+                class="field"
+            >
                 <label :for="`auth-${field.name}`">{{ field.label }}</label>
-                <input :id="`auth-${field.name}`" :name="field.name" :type="field.type"
-                    v-model="data[field.name]" :autocomplete="field.autocomplete"
-                    :maxlength="field.max" required
+                <input
+                    :id="`auth-${field.name}`"
+                    :name="field.name"
+                    :type="field.type"
+                    v-model="data[field.name]"
+                    :autocomplete="field.autocomplete"
+                    :maxlength="field.max"
+                    required
                     :aria-invalid="Boolean(errors[field.name] || serverErrors?.[field.name])"
                     :aria-describedby="`auth-${field.name}-error`"
-                    @input="delete errors[field.name]; emit('clear-error', field.name)" />
-                <span :id="`auth-${field.name}-error`" class="field-error">
+                    @input="
+                        delete errors[field.name];
+                        emit('clear-error', field.name);
+                    "
+                />
+                <span
+                    :id="`auth-${field.name}-error`"
+                    class="field-error"
+                >
                     {{ errors[field.name] || serverErrors?.[field.name] }}
                 </span>
             </div>
-            <p class="form-hint" v-if="registering">
+            <p
+                class="form-hint"
+                v-if="registering"
+            >
                 Пароль — от 8 символов. Новый аккаунт получает доступ к просмотру студентов.
             </p>
-            <button class="button button-primary button-wide" type="submit">
-                <span v-if="busy" class="spinner" aria-hidden="true"></span>
+            <button
+                class="button button-primary button-wide"
+                type="submit"
+            >
+                <span
+                    v-if="busy"
+                    class="spinner"
+                    aria-hidden="true"
+                ></span>
                 {{ busy ? "Подождите…" : registering ? "Создать аккаунт" : "Войти" }}
             </button>
         </fieldset>
